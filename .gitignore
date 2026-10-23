@@ -1,0 +1,24 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# rust
+backend/target/
+
+# node
+node_modules/
+frontend/**/build/
+frontend/**/.svelte-kit/
+frontend/**/.output/
+frontend/**/.wxt/
+frontend/**/dist/
+frontend/**/test-results/
+frontend/**/playwright-report/
+
+# editors / os
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store

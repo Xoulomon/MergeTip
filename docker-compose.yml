@@ -1,0 +1,45 @@
+# Local development services. `docker compose up -d` (or `make up`).
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mergetip
+      POSTGRES_PASSWORD: mergetip
+      POSTGRES_DB: mergetip
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mergetip"]
+      interval: 5s
+      retries: 10
+
+  relay:
+    image: scsibug/nostr-rs-relay:latest
+    ports: ["7000:8080"]
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # web UI
+
+  mock-nwc:
+    build:
+      context: ./backend
+      args: { BIN: mock-nwc }
+    environment:
+      RELAY_URL: ws://relay:8080
+      RUST_LOG: info
+    depends_on: [relay]
+
+  mock-lnurl:
+    build:
+      context: ./backend
+      args: { BIN: mock-lnurl }
+    environment:
+      MOCK_LNURL_ADDR: 0.0.0.0:8090
+      RUST_LOG: info
+    ports: ["8090:8090"]
+
+volumes:
+  pgdata:

@@ -1,0 +1,18 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MergeTip API",
+    "version": "0.1.0",
+    "description": "Generated from the Rust backend with utoipa. Do not edit by hand once generation is wired up."
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": { "description": "Service is up", "content": { "text/plain": { "schema": { "type": "string" } } } }
+        }
+      }
+    }
+  }
+}

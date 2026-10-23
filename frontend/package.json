@@ -1,0 +1,31 @@
+{
+	"name": "mergetip-frontend",
+	"private": true,
+	"type": "module",
+	"packageManager": "pnpm@11.9.0",
+	"engines": {
+		"node": ">=22"
+	},
+	"scripts": {
+		"dev": "pnpm --filter @mergetip/web dev",
+		"dev:ext": "pnpm --filter @mergetip/extension dev",
+		"build": "pnpm -r build",
+		"check": "pnpm -r check",
+		"lint": "eslint . && prettier --check .",
+		"format": "prettier --write .",
+		"test": "pnpm -r --if-present test",
+		"gen:api": "pnpm --filter @mergetip/api-client gen"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.0",
+		"eslint": "^10.13.0",
+		"eslint-config-prettier": "^10.1.0",
+		"eslint-plugin-svelte": "^3.23.1",
+		"globals": "^16.0.0",
+		"prettier": "^3.9.10",
+		"prettier-plugin-svelte": "^4.1.1",
+		"prettier-plugin-tailwindcss": "^0.7.0",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.72.0"
+	}
+}

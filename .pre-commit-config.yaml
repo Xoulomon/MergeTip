@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: bash -c 'cd backend && cargo fmt --all --check'
+        language: system
+        files: ^backend/.*\.rs$
+        pass_filenames: false
+      - id: prettier
+        name: prettier
+        entry: bash -c 'cd frontend && pnpm exec prettier --check .'
+        language: system
+        files: ^frontend/
+        pass_filenames: false

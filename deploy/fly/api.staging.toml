@@ -1,0 +1,19 @@
+# Fly.io config for mergetip-api (staging). Deploy: fly deploy -c deploy/fly/api.staging.toml
+app = "mergetip-api-staging"
+primary_region = "jnb"
+
+[build]
+  dockerfile = "../../backend/Dockerfile"
+  [build.args]
+    BIN = "mergetip-api"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    path = "/healthz"
+    interval = "15s"
+    timeout = "2s"

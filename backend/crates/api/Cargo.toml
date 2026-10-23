@@ -1,0 +1,27 @@
+[package]
+name = "mergetip-api"
+description = "HTTP server: routes, auth and webhook endpoints"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mergetip-core.workspace = true
+mergetip-github.workspace = true
+mergetip-store.workspace = true
+mergetip-crypto.workspace = true
+tokio.workspace = true
+axum.workspace = true
+tower-http.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+dotenvy.workspace = true
+utoipa.workspace = true

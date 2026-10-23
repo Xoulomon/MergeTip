@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+@import '@mergetip/ui/tokens.css';
+
+body {
+	font-family: var(--mt-font);
+	background: var(--mt-bg);
+	color: var(--mt-fg);
+}

@@ -1,0 +1,33 @@
+{
+	"name": "@mergetip/web",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"test": "vitest run --passWithNoTests",
+		"test:e2e": "playwright test"
+	},
+	"dependencies": {
+		"@mergetip/api-client": "workspace:*",
+		"@mergetip/ui": "workspace:*"
+	},
+	"devDependencies": {
+		"@breeztech/breez-sdk-spark": "~0.26.1",
+		"@playwright/test": "^1.64.1",
+		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/kit": "^3.1.0",
+		"@sveltejs/vite-plugin-svelte": "^7.3.1",
+		"@tailwindcss/vite": "^4.3.3",
+		"svelte": "^5.57.2",
+		"svelte-check": "^4.7.7",
+		"tailwindcss": "^4.3.3",
+		"typescript": "^6.0.3",
+		"vite": "^8.3.5",
+		"vitest": "^5.0.5"
+	}
+}

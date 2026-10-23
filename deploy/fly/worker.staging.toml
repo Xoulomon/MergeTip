@@ -1,0 +1,8 @@
+# Fly.io config for mergetip-worker (staging). Deploy: fly deploy -c deploy/fly/worker.staging.toml
+app = "mergetip-worker-staging"
+primary_region = "jnb"
+
+[build]
+  dockerfile = "../../backend/Dockerfile"
+  [build.args]
+    BIN = "mergetip-worker"

@@ -1,0 +1,26 @@
+[package]
+name = "mergetip-worker"
+description = "Job runner: payments, retries, expiry and emails"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mergetip-core.workspace = true
+mergetip-parser.workspace = true
+mergetip-github.workspace = true
+mergetip-payer.workspace = true
+mergetip-fiat.workspace = true
+mergetip-notify.workspace = true
+mergetip-store.workspace = true
+mergetip-crypto.workspace = true
+tokio.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+dotenvy.workspace = true

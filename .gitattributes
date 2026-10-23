@@ -1,0 +1,4 @@
+* text=auto eol=lf
+backend/.sqlx/** linguist-generated
+frontend/packages/api-client/src/schema.d.ts linguist-generated
+openapi/openapi.json linguist-generated

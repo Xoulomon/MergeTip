@@ -1,0 +1,22 @@
+{
+  "name": "mergetip-staging",
+  "url": "https://mergetip.dev",
+  "hook_attributes": { "url": "https://api.staging.mergetip.dev/v1/webhooks/github" },
+  "redirect_url": "https://staging.mergetip.dev/github-app/callback",
+  "callback_urls": ["https://staging.mergetip.dev/auth/github/callback"],
+  "request_oauth_on_install": false,
+  "public": false,
+  "default_permissions": {
+    "issues": "write",
+    "pull_requests": "write",
+    "contents": "read",
+    "metadata": "read"
+  },
+  "default_events": [
+    "issue_comment",
+    "pull_request",
+    "pull_request_review",
+    "pull_request_review_comment",
+    "installation_repositories"
+  ]
+}

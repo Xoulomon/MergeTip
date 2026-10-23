@@ -1,0 +1,26 @@
+/* Primer-style design tokens. ⚡ is the only brand mark. */
+:root {
+	--mt-font:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+	--mt-bg: #ffffff;
+	--mt-fg: #1f2328;
+	--mt-muted: #59636e;
+	--mt-border: #d1d9e0;
+	--mt-btn-bg: #f6f8fa;
+	--mt-accent: #1f883d;
+	--mt-accent-fg: #ffffff;
+	--mt-bolt: #d4a72c;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--mt-bg: #0d1117;
+		--mt-fg: #f0f6fc;
+		--mt-muted: #9198a1;
+		--mt-border: #3d444d;
+		--mt-btn-bg: #212830;
+		--mt-accent: #238636;
+		--mt-accent-fg: #ffffff;
+		--mt-bolt: #e3b341;
+	}
+}

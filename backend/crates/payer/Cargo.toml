@@ -1,0 +1,28 @@
+[package]
+name = "mergetip-payer"
+description = "NWC client, LNURL resolver and invoice validation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mergetip-core.workspace = true
+nwc.workspace = true
+nostr-sdk.workspace = true
+lnurl-rs.workspace = true
+bitcoin.workspace = true
+lightning-invoice.workspace = true
+async-trait.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+sha2.workspace = true
+hex.workspace = true
+
+[dev-dependencies]
+wiremock.workspace = true
+tokio.workspace = true

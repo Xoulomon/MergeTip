@@ -1,0 +1,7 @@
+build
+.svelte-kit
+.output
+.wxt
+dist
+pnpm-lock.yaml
+**/schema.d.ts

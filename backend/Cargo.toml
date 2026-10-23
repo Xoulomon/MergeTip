@@ -1,0 +1,79 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "devtools/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+license = "MIT"
+repository = "https://github.com/xoulomon/mergetip"
+publish = false
+
+[workspace.dependencies]
+# internal crates
+mergetip-core = { path = "crates/core" }
+mergetip-parser = { path = "crates/parser" }
+mergetip-github = { path = "crates/github" }
+mergetip-payer = { path = "crates/payer" }
+mergetip-fiat = { path = "crates/fiat" }
+mergetip-notify = { path = "crates/notify" }
+mergetip-store = { path = "crates/store" }
+mergetip-crypto = { path = "crates/crypto" }
+
+# runtime / http
+tokio = { version = "1", features = ["full"] }
+axum = "0.8"
+tower-http = { version = "0.7", features = ["trace", "limit", "cors"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+
+# serialization / errors / ids
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+time = { version = "0.3", features = ["serde"] }
+async-trait = "0.1"
+
+# observability / config
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+dotenvy = "0.15"
+
+# database
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "macros", "migrate", "uuid", "time", "json"] }
+
+# api contract
+utoipa = { version = "6", features = ["axum_extras", "uuid", "time"] }
+
+# integrations
+octocrab = "0.54"
+nostr-sdk = "0.45"
+nwc = "0.45"
+lnurl-rs = "0.10"
+# lnurl-rs 0.10 needs secp256k1 rand std features enabled transitively
+bitcoin = { version = "0.32", features = ["rand-std"] }
+lightning-invoice = "0.34"
+
+# crypto
+aes-gcm = "0.11"
+zeroize = { version = "1", features = ["derive"] }
+hmac = "0.13"
+sha2 = "0.11"
+hex = "0.4"
+
+# testing
+proptest = "1"
+insta = "1"
+wiremock = "0.6"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

@@ -1,0 +1,19 @@
+[package]
+name = "mergetip-github"
+description = "GitHub App auth, verifier and bot replies"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mergetip-core.workspace = true
+octocrab.workspace = true
+async-trait.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true

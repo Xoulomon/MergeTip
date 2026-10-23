@@ -1,0 +1,18 @@
+[package]
+name = "mergetip-notify"
+description = "Email notifications (Resend/Postmark) and templates"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+mergetip-core.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+async-trait.workspace = true

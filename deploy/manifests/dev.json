@@ -1,0 +1,22 @@
+{
+  "name": "mergetip-dev-<name>",
+  "url": "https://mergetip.dev",
+  "hook_attributes": { "url": "https://smee.io/<channel>" },
+  "redirect_url": "http://localhost:5173/github-app/callback",
+  "callback_urls": ["http://localhost:5173/auth/github/callback"],
+  "request_oauth_on_install": false,
+  "public": false,
+  "default_permissions": {
+    "issues": "write",
+    "pull_requests": "write",
+    "contents": "read",
+    "metadata": "read"
+  },
+  "default_events": [
+    "issue_comment",
+    "pull_request",
+    "pull_request_review",
+    "pull_request_review_comment",
+    "installation_repositories"
+  ]
+}
