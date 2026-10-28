@@ -7,7 +7,6 @@
 		<div class="mt-footer-top">
 			<div class="mt-footer-brand">
 				<div class="mt-footer-logo">
-					<span class="mt-brand-icon">⚡</span>
 					<span class="mt-brand-name">MergeTip</span>
 				</div>
 				<p class="mt-footer-tagline">
@@ -55,7 +54,7 @@
 			<div class="mt-footer-meta">
 				<span>Designed for open-source builders</span>
 				<span class="mt-footer-bullet">•</span>
-				<span>⚡ 100% Non-Custodial</span>
+				<span>100% Non-Custodial</span>
 			</div>
 		</div>
 	</div>

@@ -171,7 +171,7 @@
 		<div class="mt-dashboard-header">
 			<div>
 				<div class="mt-header-badge">
-					<Badge variant="bolt" size="sm">⚡ Sponsor Account</Badge>
+					<Badge variant="bolt" size="sm">Sponsor Account</Badge>
 				</div>
 				<h1>Sponsor Dashboard</h1>
 				<p>Real-time monitoring of your Nostr Wallet Connect tips, active pledges and monthly caps.</p>
@@ -179,10 +179,10 @@
 
 			<div class="mt-header-actions">
 				<Button variant="default" size="md" onclick={() => (window.location.href = '/settings')}>
-					⚙️ Settings
+					Settings
 				</Button>
 				<Button variant="bolt" size="md" onclick={() => (sendModalOpen = true)}>
-					⚡ Send Manual Tip
+					Send Manual Tip
 				</Button>
 			</div>
 		</div>
@@ -386,8 +386,7 @@
 	>
 		{#if sendSuccess}
 			<div class="mt-success-alert">
-				<span class="mt-success-icon">🎉</span>
-				<h3>Payment Dispatched!</h3>
+				<h3>Payment Dispatched</h3>
 				<p>Sent {newAmount.toLocaleString('en-US')} sats to @{newReceiver}. Recorded on relay.</p>
 			</div>
 		{:else}
@@ -472,7 +471,7 @@
 			{#if !sendSuccess}
 				<Button variant="default" size="sm" onclick={() => (sendModalOpen = false)}>Cancel</Button>
 				<Button variant="bolt" size="sm" onclick={submitManualTip}>
-					⚡ Authorize & Pay {newAmount.toLocaleString('en-US')} sats
+					Authorize & Pay {newAmount.toLocaleString('en-US')} sats
 				</Button>
 			{/if}
 		{/snippet}

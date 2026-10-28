@@ -54,7 +54,6 @@
 		{#if claimCompleted && claimTxReceipt}
 			<!-- Claim Success Receipt View -->
 			<div class="mt-receipt-card">
-				<div class="mt-receipt-icon">🎉</div>
 				<h2>Sats Successfully Claimed!</h2>
 				<p class="mt-receipt-desc">
 					Your <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong> have been transferred via {claimTxReceipt.method}.
@@ -96,8 +95,8 @@
 			<!-- Claim Header Hero -->
 			<div class="mt-claim-header">
 				<div class="mt-claim-badge">
-					<Badge variant="bolt" size="md">⚡ Cryptographic Pledge</Badge>
-					<span class="mt-expiry-text">⏳ Expires in {pledge.expires_at}</span>
+					<Badge variant="bolt" size="md">Cryptographic Pledge</Badge>
+					<span class="mt-expiry-text">Expires in {pledge.expires_at}</span>
 				</div>
 
 				<h1>Claim your sats</h1>
@@ -126,7 +125,6 @@
 						class="mt-method-tab {activeClaimTab === 'lnurl' ? 'tab-active' : ''}"
 						onclick={() => (activeClaimTab = 'lnurl')}
 					>
-						<span class="mt-tab-ico">🏷️</span>
 						<span>Lightning Address</span>
 					</button>
 
@@ -134,7 +132,6 @@
 						class="mt-method-tab {activeClaimTab === 'breez' ? 'tab-active' : ''}"
 						onclick={() => (activeClaimTab = 'breez')}
 					>
-						<span class="mt-tab-ico">⚡</span>
 						<span>Instant Web Wallet</span>
 					</button>
 
@@ -142,7 +139,6 @@
 						class="mt-method-tab {activeClaimTab === 'invoice' ? 'tab-active' : ''}"
 						onclick={() => (activeClaimTab = 'invoice')}
 					>
-						<span class="mt-tab-ico">🧾</span>
 						<span>Bolt11 Invoice</span>
 					</button>
 
@@ -150,7 +146,6 @@
 						class="mt-method-tab {activeClaimTab === 'bitnob' ? 'tab-active' : ''}"
 						onclick={() => (activeClaimTab = 'bitnob')}
 					>
-						<span class="mt-tab-ico">🌍</span>
 						<span>African Fiat Bank</span>
 					</button>
 				</div>
@@ -181,7 +176,7 @@
 									disabled={!userLnAddress}
 									onclick={() => executeClaim(`Lightning Address (${userLnAddress})`)}
 								>
-									⚡ Claim {pledge.amount_sats.toLocaleString('en-US')} Sats Directly
+									Claim {pledge.amount_sats.toLocaleString('en-US')} Sats Directly
 								</Button>
 							</div>
 						</div>
@@ -196,9 +191,9 @@
 							{#if !breezWalletCreated}
 								<div class="mt-spark-cta">
 									<div class="mt-spark-features">
-										<div class="mt-spark-feat">🔒 Zero custodial risk — keys stay in your browser</div>
-										<div class="mt-spark-feat">⚡ Instant sub-second claim</div>
-										<div class="mt-spark-feat">📱 Export seed words or LNURL anytime</div>
+										<div class="mt-spark-feat">Zero custodial risk — keys stay in your browser</div>
+										<div class="mt-spark-feat">Instant sub-second claim</div>
+										<div class="mt-spark-feat">Export seed words or LNURL anytime</div>
 									</div>
 
 									<Button
@@ -208,7 +203,7 @@
 											breezWalletCreated = true;
 										}}
 									>
-										🚀 Create Instant Browser Wallet
+										Create Instant Browser Wallet
 									</Button>
 								</div>
 							{:else}
@@ -229,7 +224,7 @@
 										loading={claiming}
 										onclick={() => executeClaim('Breez Spark In-Browser Wallet')}
 									>
-										⚡ Deposit {pledge.amount_sats.toLocaleString('en-US')} Sats Into Browser Wallet
+										Deposit {pledge.amount_sats.toLocaleString('en-US')} Sats Into Browser Wallet
 									</Button>
 								</div>
 							{/if}
@@ -261,7 +256,7 @@
 									disabled={!bolt11Invoice}
 									onclick={() => executeClaim('Bolt11 Invoice')}
 								>
-									⚡ Pay Invoice Now
+									Pay Invoice Now
 								</Button>
 							</div>
 						</div>
@@ -318,7 +313,7 @@
 									disabled={!fiatAccount}
 									onclick={() => executeClaim(`Bitnob Fiat Transfer (${formatBitnobFiat(pledge.amount_sats, fiatCurrency)})`)}
 								>
-									🏦 Initiate Bank Payout via Bitnob
+									Initiate Bank Payout via Bitnob
 								</Button>
 							</div>
 						</div>

@@ -126,7 +126,7 @@
 	const maintainedRepos = [
 		{
 			name: 'xoulomon/mergetip',
-			desc: '⚡ Non-custodial Bitcoin tipping protocol for GitHub pull requests via NWC, LNURL, Breez & Bitnob.',
+			desc: 'Non-custodial Bitcoin tipping protocol for GitHub pull requests via NWC, LNURL, Breez and Bitnob.',
 			lang: 'Rust + Svelte',
 			stars: 48,
 			tipsCount: 22,
@@ -158,7 +158,7 @@
 </script>
 
 <svelte:head>
-	<title>@{profile.handle} ({profile.name}) ⚡ MergeTip Profile</title>
+	<title>@{profile.handle} ({profile.name}) - MergeTip Profile</title>
 </svelte:head>
 
 <div class="mt-profile-page">
@@ -186,7 +186,6 @@
 							el.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
 						}}
 					/>
-					<div class="mt-avatar-badge" title="Verified Lightning Sponsor">⚡</div>
 				</div>
 
 				<!-- Identity & Badges -->
@@ -204,7 +203,6 @@
 						<!-- Quick Actions -->
 						<div class="mt-header-actions">
 							<Button variant="bolt" onclick={() => (showTipModal = true)}>
-								<span class="mt-action-icon">⚡</span>
 								<span>Tip @{profile.handle}</span>
 							</Button>
 							<Button variant="outline" onclick={() => (showQrModal = true)}>
@@ -214,7 +212,7 @@
 								variant="default"
 								onclick={() => copyToClipboard(window.location.href, 'profile')}
 							>
-								{copyNotice === 'profile' ? '✓ Link Copied' : 'Share'}
+								{copyNotice === 'profile' ? 'Link Copied' : 'Share'}
 							</Button>
 						</div>
 					</div>
@@ -225,19 +223,15 @@
 					<!-- Metadata & Protocol Pills -->
 					<div class="mt-meta-chips">
 						<div class="mt-meta-chip">
-							<span class="mt-chip-icon">📍</span>
 							<span>{profile.location}</span>
 						</div>
 						<div class="mt-meta-chip">
-							<span class="mt-chip-icon">🗓️</span>
 							<span>Member since {profile.joinedDate}</span>
 						</div>
 						<a href={profile.githubUrl} target="_blank" rel="noreferrer" class="mt-meta-chip mt-meta-link">
-							<span class="mt-chip-icon">🐙</span>
 							<span>github.com/{profile.handle}</span>
 						</a>
 						<a href={profile.website} target="_blank" rel="noreferrer" class="mt-meta-chip mt-meta-link">
-							<span class="mt-chip-icon">🌐</span>
 							<span>mergetip.dev</span>
 						</a>
 					</div>
@@ -246,7 +240,7 @@
 					<div class="mt-protocol-cards">
 						<!-- Lightning Address -->
 						<div class="mt-protocol-card">
-							<div class="mt-card-icon">⚡</div>
+							<span class="mt-proto-tag">LN</span>
 							<div class="mt-card-details">
 								<span class="mt-card-label">Lightning Address (LNURL-pay)</span>
 								<span class="mt-card-value">{profile.lightningAddress}</span>
@@ -256,13 +250,13 @@
 								onclick={() => copyToClipboard(profile.lightningAddress, 'ln')}
 								title="Copy Lightning Address"
 							>
-								{copyNotice === 'ln' ? '✓ Copied' : 'Copy'}
+								{copyNotice === 'ln' ? 'Copied' : 'Copy'}
 							</button>
 						</div>
 
 						<!-- Nostr Pubkey -->
 						<div class="mt-protocol-card">
-							<div class="mt-card-icon mt-card-icon-nostr">🟣</div>
+							<span class="mt-proto-tag">NPUB</span>
 							<div class="mt-card-details">
 								<span class="mt-card-label">Nostr Public Key</span>
 								<span class="mt-card-value">{profile.nostrNpub.slice(0, 14)}…{profile.nostrNpub.slice(-8)}</span>
@@ -272,7 +266,7 @@
 								onclick={() => copyToClipboard(profile.nostrNpub, 'nostr')}
 								title="Copy Nostr npub"
 							>
-								{copyNotice === 'nostr' ? '✓ Copied' : 'Copy'}
+								{copyNotice === 'nostr' ? 'Copied' : 'Copy'}
 							</button>
 						</div>
 					</div>
@@ -319,7 +313,6 @@
 					role="tab"
 					aria-selected={activeTab === 'activity'}
 				>
-					<span class="mt-tab-emoji">⚡</span>
 					<span>Sponsored Tips</span>
 					<span class="mt-tab-count">{sponsoredTips.length}</span>
 				</button>
@@ -330,7 +323,6 @@
 					role="tab"
 					aria-selected={activeTab === 'repos'}
 				>
-					<span class="mt-tab-emoji">📦</span>
 					<span>Supported Repositories</span>
 					<span class="mt-tab-count">{maintainedRepos.length}</span>
 				</button>
@@ -341,7 +333,6 @@
 					role="tab"
 					aria-selected={activeTab === 'zap'}
 				>
-					<span class="mt-tab-emoji">💸</span>
 					<span>Direct Zap / Tip</span>
 				</button>
 
@@ -351,7 +342,6 @@
 					role="tab"
 					aria-selected={activeTab === 'proofs'}
 				>
-					<span class="mt-tab-emoji">🛡️</span>
 					<span>Protocol Proofs & Badges</span>
 				</button>
 			</div>
@@ -388,11 +378,11 @@
 								</div>
 								<div class="mt-repo-stat">
 									<span class="mt-repo-stat-lbl">Total Distributed</span>
-									<span class="mt-repo-stat-val">⚡ {repo.satsDistributed.toLocaleString()} sats</span>
+									<span class="mt-repo-stat-val">{repo.satsDistributed.toLocaleString()} sats</span>
 								</div>
 								<div class="mt-repo-stat">
 									<span class="mt-repo-stat-lbl">GitHub Stars</span>
-									<span class="mt-repo-stat-val">★ {repo.stars.toLocaleString()}</span>
+									<span class="mt-repo-stat-val">{repo.stars.toLocaleString()} stars</span>
 								</div>
 							</div>
 
@@ -404,10 +394,10 @@
 										rel="noreferrer"
 										class="mt-repo-btn"
 									>
-										View on GitHub ↗
+										View on GitHub
 									</a>
 									<a href="/settings" class="mt-repo-settings-btn">
-										Configure Caps →
+										Configure Caps
 									</a>
 								</div>
 							{/snippet}
@@ -424,14 +414,12 @@
 						subtitle="Support @{profile.handle}'s open-source work directly via Lightning Address or WebLN."
 					>
 						<div class="mt-zap-form">
-
-						<div class="mt-zap-form">
 							<!-- Recipient summary card -->
 							<div class="mt-zap-recipient">
 								<img src={profile.avatar} alt="@{profile.handle}" class="mt-zap-avatar" />
 								<div class="mt-zap-recipient-text">
 									<span class="mt-zap-name">{profile.name}</span>
-									<span class="mt-zap-address">⚡ {profile.lightningAddress}</span>
+									<span class="mt-zap-address">{profile.lightningAddress}</span>
 								</div>
 								<Badge variant="bolt" size="sm">Zero Custody</Badge>
 							</div>
@@ -458,7 +446,7 @@
 							<div class="mt-form-group">
 								<label for="custom-sats" class="mt-label">Custom Sat Amount</label>
 								<div class="mt-input-with-addons">
-									<span class="mt-addon-left">⚡</span>
+									<span class="mt-addon-left">SATS</span>
 									<input
 										id="custom-sats"
 										type="number"
@@ -499,7 +487,7 @@
 									loading={tipPaying}
 									onclick={handleSendTip}
 								>
-									{tipSuccess ? '✓ Payment Confirmed!' : `⚡ Pay ${tipAmountSats.toLocaleString()} sats (${formatFiatUSD(tipAmountSats)})`}
+									{tipSuccess ? 'Payment Confirmed' : `Pay ${tipAmountSats.toLocaleString()} sats (${formatFiatUSD(tipAmountSats)})`}
 								</Button>
 								<Button variant="outline" size="lg" onclick={() => (showQrModal = true)}>
 									Show QR Code
@@ -517,7 +505,6 @@
 					<Card title="Earned Protocol Badges">
 						<div class="mt-badges-list">
 							<div class="mt-badge-item">
-								<div class="mt-badge-icon">⚡</div>
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Genesis Sponsor</span>
 									<span class="mt-badge-desc">One of the first 50 project sponsors on the MergeTip protocol.</span>
@@ -526,7 +513,6 @@
 							</div>
 
 							<div class="mt-badge-item">
-								<div class="mt-badge-icon">🛡️</div>
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Non-Custodial Purist</span>
 									<span class="mt-badge-desc">100% of tips funded directly through user-held NIP-47 wallet connect keys.</span>
@@ -535,7 +521,6 @@
 							</div>
 
 							<div class="mt-badge-item">
-								<div class="mt-badge-icon">🌍</div>
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Pan-African Rail Supporter</span>
 									<span class="mt-badge-desc">Funded contributor payouts into Bitnob corridors across Nigeria, Ghana & Kenya.</span>
@@ -544,7 +529,6 @@
 							</div>
 
 							<div class="mt-badge-item">
-								<div class="mt-badge-icon">🚀</div>
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Instant Settlement Champion</span>
 									<span class="mt-badge-desc">Average merge-to-lightning payout velocity under 2.4 seconds.</span>
@@ -604,14 +588,14 @@
 			</svg>
 		</div>
 		<div class="mt-qr-meta">
-			<span class="mt-qr-address">⚡ {profile.lightningAddress}</span>
+			<span class="mt-qr-address">{profile.lightningAddress}</span>
 			<p class="mt-qr-note">Scan with Phoenix, Zeus, Cash App, Alby Go, Strike, or any Lightning wallet.</p>
 		</div>
 	</div>
 
 	{#snippet footer()}
 		<Button variant="default" onclick={() => copyToClipboard(profile.lightningAddress, 'modal-ln')}>
-			{copyNotice === 'modal-ln' ? '✓ Copied!' : 'Copy Address'}
+			{copyNotice === 'modal-ln' ? 'Copied' : 'Copy Address'}
 		</Button>
 		<Button variant="primary" onclick={() => (showQrModal = false)}>
 			Done
@@ -626,7 +610,7 @@
 			<img src={profile.avatar} alt="@{profile.handle}" class="mt-modal-avatar" />
 			<div>
 				<span class="mt-modal-username">{profile.name} (@{profile.handle})</span>
-				<span class="mt-modal-address">⚡ {profile.lightningAddress}</span>
+				<span class="mt-modal-address">{profile.lightningAddress}</span>
 			</div>
 		</div>
 
@@ -653,7 +637,7 @@
 
 		{#if tipSuccess}
 			<div class="mt-success-banner">
-				<span>⚡ Payment settled instantly via Lightning! Preimage verified.</span>
+				<span>Payment settled instantly via Lightning! Preimage verified.</span>
 			</div>
 		{/if}
 	</div>
@@ -667,7 +651,7 @@
 			loading={tipPaying}
 			onclick={handleSendTip}
 		>
-			{tipSuccess ? '✓ Settled' : `Pay ${tipAmountSats.toLocaleString()} sats`}
+			{tipSuccess ? 'Settled' : `Pay ${tipAmountSats.toLocaleString()} sats`}
 		</Button>
 	{/snippet}
 </Modal>

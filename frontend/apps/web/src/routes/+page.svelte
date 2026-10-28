@@ -60,7 +60,6 @@
 	<section class="mt-hero">
 		<div class="mt-hero-container">
 			<div class="mt-eyebrow">
-				<span class="mt-eyebrow-bolt">⚡</span>
 				<span>Open-Source Bitcoin Rewards Protocol</span>
 				<span class="mt-eyebrow-pill">Non-Custodial</span>
 			</div>
@@ -87,19 +86,15 @@
 
 			<div class="mt-hero-trust">
 				<div class="mt-trust-item">
-					<span class="mt-trust-icon">🔒</span>
 					<span>Non-Custodial (NIP-47)</span>
 				</div>
 				<div class="mt-trust-item">
-					<span class="mt-trust-icon">⚡</span>
 					<span>Sub-cent Lightning Fees</span>
 				</div>
 				<div class="mt-trust-item">
-					<span class="mt-trust-icon">🌍</span>
 					<span>Global + Local Fiat Rails</span>
 				</div>
 				<div class="mt-trust-item">
-					<span class="mt-trust-icon">🐙</span>
 					<span>Pure GitHub App Workflow</span>
 				</div>
 			</div>
@@ -182,7 +177,7 @@
 				<!-- Bot Output Preview Column -->
 				<div class="mt-bot-preview">
 					<div class="mt-bot-header">
-						<div class="mt-bot-avatar">⚡</div>
+						<div class="mt-bot-avatar">MT</div>
 						<div class="mt-bot-meta">
 							<span class="mt-bot-name">mergetip-bot</span>
 							<span class="mt-bot-badge">bot</span>
@@ -192,17 +187,15 @@
 
 					<div class="mt-bot-content">
 						<p class="mt-bot-lead">
-							⚡ <strong>@{parsedData.receiver}</strong> was tipped <strong>{parsedData.amount_sats.toLocaleString('en-US')} sats</strong> ({formatFiatUSD(parsedData.amount_sats)})!
+							<strong>@{parsedData.receiver}</strong> was tipped <strong>{parsedData.amount_sats.toLocaleString('en-US')} sats</strong> ({formatFiatUSD(parsedData.amount_sats)})
 						</p>
 
 						{#if parsedData.on_merge}
 							<div class="mt-bot-alert mt-alert-held">
-								<span class="mt-alert-icon">⏳</span>
 								<span>Pledged on-merge: Sats will automatically transfer when this pull request is merged.</span>
 							</div>
 						{:else}
 							<div class="mt-bot-alert mt-alert-paid">
-								<span class="mt-alert-icon">✅</span>
 								<span>Settled over Lightning via Nostr Wallet Connect. Preimage: <code>0x4f8a...92b1</code></span>
 							</div>
 						{/if}
@@ -228,7 +221,6 @@
 
 		<div class="mt-pillars-grid">
 			<div class="mt-pillar-card">
-				<div class="mt-pillar-icon mt-icon-bolt">⚡</div>
 				<h3>Nostr Wallet Connect</h3>
 				<p>
 					Payments are initiated directly from your existing wallet (Alby, Mutiny, Umbrel, raspiblitz) via NIP-47 with envelope encryption (NIP-44) and budget caps.
@@ -241,7 +233,6 @@
 			</div>
 
 			<div class="mt-pillar-card">
-				<div class="mt-pillar-icon mt-icon-lnurl">🏷️</div>
 				<h3>Lightning Address Protocol</h3>
 				<p>
 					Receivers get paid directly to their Lightning address (e.g. <code>alice@getalby.com</code>) via LNURL-pay with sub-second finality and zero manual invoicing.
@@ -254,7 +245,6 @@
 			</div>
 
 			<div class="mt-pillar-card">
-				<div class="mt-pillar-icon mt-icon-spark">🎁</div>
 				<h3>Pledges & Breez Spark SDK</h3>
 				<p>
 					If a contributor hasn't set up a Lightning address yet, tips are held as cryptographic pledges. They can claim anytime via an instant in-browser WebAssembly wallet.
@@ -267,7 +257,6 @@
 			</div>
 
 			<div class="mt-pillar-card">
-				<div class="mt-pillar-icon mt-icon-bitnob">🌍</div>
 				<h3>Local African Fiat Rails</h3>
 				<p>
 					Through the Bitnob Payouts API integration, contributors in Nigeria, Ghana and Kenya can automatically convert sats into local bank or mobile money deposits.
@@ -343,7 +332,7 @@
 				<p>Boost code review velocity, attract top maintainers, and fuel open-source development with satoshi micro-rewards.</p>
 				<div class="mt-cta-buttons">
 					<Button variant="bolt" size="lg" onclick={() => (window.location.href = '/settings')}>
-						⚡ Connect Wallet (NWC)
+						Connect Wallet (NWC)
 					</Button>
 					<Button variant="outline" size="lg" onclick={() => (window.location.href = '/dashboard')}>
 						Go to Dashboard

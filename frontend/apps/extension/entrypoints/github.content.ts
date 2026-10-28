@@ -1,4 +1,4 @@
-// Injects ⚡ Tip buttons on PR headers, reviews, review comments and issue comments (FR-8.1).
+// Injects Tip buttons on PR headers, reviews, review comments and issue comments (FR-8.1).
 export default defineContentScript({
 	matches: ['https://github.com/*'],
 	main() {

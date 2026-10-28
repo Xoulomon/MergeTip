@@ -70,7 +70,6 @@
 		<!-- Brand & Logo -->
 		<div class="mt-navbar-left">
 			<a href="/" class="mt-brand" aria-label="MergeTip Home">
-				<span class="mt-brand-icon">⚡</span>
 				<span class="mt-brand-name">MergeTip</span>
 				<span class="mt-brand-badge">NWC</span>
 			</a>
@@ -99,7 +98,6 @@
 			<!-- Wallet Balance Pill -->
 			{#if walletConnected}
 				<a href="/settings" class="mt-wallet-pill" title="Nostr Wallet Connect (NWC) connected balance">
-					<span class="mt-wallet-icon">⚡</span>
 					<span class="mt-wallet-amt">{walletBalanceSats.toLocaleString('en-US')}</span>
 					<span class="mt-wallet-unit">sats</span>
 				</a>
@@ -155,7 +153,6 @@
 					</div>
 					<div class="mt-user-meta">
 						<span class="mt-user-name">@{userHandle}</span>
-						<span class="mt-user-badge">⚡</span>
 					</div>
 					<svg
 						class="mt-chevron {profileMenuOpen ? 'mt-chevron-up' : ''}"
@@ -179,7 +176,6 @@
 										alt="@{userHandle}"
 										class="mt-drop-avatar"
 									/>
-									<span class="mt-drop-bolt" title="Lightning enabled">⚡</span>
 								</div>
 								<div class="mt-drop-user-info">
 									<div class="mt-drop-name-row">
@@ -204,27 +200,27 @@
 							<div class="mt-protocol-pills">
 								<!-- Lightning Address -->
 								<div class="mt-proto-pill">
-									<div class="mt-proto-icon" title="Lightning Address">⚡</div>
+									<span class="mt-proto-tag">LN</span>
 									<span class="mt-proto-text" title={lightningAddress}>{lightningAddress}</span>
 									<button
 										class="mt-proto-copy"
 										onclick={(e) => copyField(lightningAddress, 'ln', e)}
 										title="Copy Lightning Address"
 									>
-										{copiedField === 'ln' ? '✓' : 'Copy'}
+										{copiedField === 'ln' ? 'Copied' : 'Copy'}
 									</button>
 								</div>
 
 								<!-- Nostr npub -->
 								<div class="mt-proto-pill">
-									<div class="mt-proto-icon mt-proto-nostr" title="Nostr npub">🟣</div>
+									<span class="mt-proto-tag">NPUB</span>
 									<span class="mt-proto-text" title={nostrPubkey}>{nostrPubkey.slice(0, 10)}…{nostrPubkey.slice(-4)}</span>
 									<button
 										class="mt-proto-copy"
 										onclick={(e) => copyField(nostrPubkey, 'nostr', e)}
 										title="Copy Nostr Pubkey"
 									>
-										{copiedField === 'nostr' ? '✓' : 'Copy'}
+										{copiedField === 'nostr' ? 'Copied' : 'Copy'}
 									</button>
 								</div>
 							</div>
@@ -234,7 +230,7 @@
 						<div class="mt-drop-stats">
 							<div class="mt-drop-stat">
 								<span class="mt-drop-stat-label">Wallet Balance</span>
-								<span class="mt-drop-stat-val">⚡ {walletBalanceSats.toLocaleString('en-US')} <small>sats</small></span>
+								<span class="mt-drop-stat-val">{walletBalanceSats.toLocaleString('en-US')} <small>sats</small></span>
 							</div>
 							<div class="mt-drop-stat">
 								<span class="mt-drop-stat-label">Total Disbursed</span>
@@ -245,30 +241,24 @@
 						<!-- Menu Navigation Items -->
 						<div class="mt-drop-menu">
 							<a href="/profile" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-icon">👤</div>
 								<div class="mt-item-text">
 									<span class="mt-item-title">Public Contributor Profile</span>
-									<span class="mt-item-desc">View verified badges, stats & tips</span>
+									<span class="mt-item-desc">View verified badges, stats and tips</span>
 								</div>
-								<span class="mt-item-arrow">→</span>
 							</a>
 
 							<a href="/dashboard" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-icon">📊</div>
 								<div class="mt-item-text">
 									<span class="mt-item-title">Sponsor Dashboard</span>
-									<span class="mt-item-desc">Spending caps & live tip stream</span>
+									<span class="mt-item-desc">Spending caps and live tip stream</span>
 								</div>
-								<span class="mt-item-arrow">→</span>
 							</a>
 
 							<a href="/settings" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-icon">⚙️</div>
 								<div class="mt-item-text">
 									<span class="mt-item-title">Protocol & Wallet Settings</span>
-									<span class="mt-item-desc">NWC keys, GitHub apps & fiat rails</span>
+									<span class="mt-item-desc">NWC keys, GitHub apps and fiat rails</span>
 								</div>
-								<span class="mt-item-arrow">→</span>
 							</a>
 
 							<a
@@ -278,12 +268,10 @@
 								class="mt-drop-item"
 								role="menuitem"
 							>
-								<div class="mt-item-icon">🐙</div>
 								<div class="mt-item-text">
 									<span class="mt-item-title">GitHub Profile</span>
 									<span class="mt-item-desc">github.com/{userHandle}</span>
 								</div>
-								<span class="mt-item-arrow">↗</span>
 							</a>
 						</div>
 
@@ -686,14 +674,16 @@
 		font-size: 12px;
 	}
 
-	.mt-proto-icon {
-		font-size: 12px;
-		color: var(--mt-bolt);
-		flex-shrink: 0;
-	}
-
-	.mt-proto-nostr {
-		color: #a371f7;
+	.mt-proto-tag {
+		font-size: 10px;
+		font-weight: 700;
+		font-family: var(--mt-font-mono);
+		padding: 1px 5px;
+		border-radius: 4px;
+		background: var(--mt-surface-subtle);
+		border: 1px solid var(--mt-border);
+		color: var(--mt-fg-muted);
+		letter-spacing: 0.04em;
 	}
 
 	.mt-proto-text {

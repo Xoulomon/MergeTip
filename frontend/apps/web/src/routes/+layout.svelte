@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-	<title>MergeTip ⚡ Non-Custodial Bitcoin Tips for GitHub</title>
+	<title>MergeTip - Non-Custodial Bitcoin Tips for GitHub</title>
 </svelte:head>
 
 <div class="mt-app-shell">

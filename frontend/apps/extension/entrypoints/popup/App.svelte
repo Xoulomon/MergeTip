@@ -26,7 +26,6 @@
 	<!-- Popup Header -->
 	<div class="mt-popup-header">
 		<div class="mt-popup-brand">
-			<span class="mt-popup-bolt">⚡</span>
 			<span class="mt-popup-name">MergeTip</span>
 		</div>
 		<div class="mt-relay-status" title="Nostr relay connected">
@@ -51,7 +50,6 @@
 
 	{#if tipSuccess}
 		<div class="mt-success-box">
-			<span class="mt-success-ico">🎉</span>
 			<h4>Tip Dispatched!</h4>
 			<p>Sent {selectedAmount.toLocaleString('en-US')} sats to @{activeContributor}.</p>
 		</div>
@@ -88,7 +86,7 @@
 				loading={tipping}
 				onclick={sendExtensionTip}
 			>
-				⚡ Tip {selectedAmount.toLocaleString('en-US')} Sats
+				Tip {selectedAmount.toLocaleString('en-US')} Sats
 			</Button>
 		</div>
 	{/if}
@@ -96,10 +94,10 @@
 	<!-- Popup Footer -->
 	<div class="mt-popup-footer">
 		<a href="http://localhost:5173/dashboard" target="_blank" rel="noreferrer" class="mt-dash-link">
-			Open Web Dashboard ↗
+			Open Web Dashboard
 		</a>
 		<a href="http://localhost:5173/settings" target="_blank" rel="noreferrer" class="mt-dash-link">
-			Settings ⚙️
+			Settings
 		</a>
 	</div>
 </main>

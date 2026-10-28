@@ -44,7 +44,6 @@
 				<tr>
 					<td colspan="7" class="mt-empty-row">
 						<div class="mt-empty-state">
-							<span class="mt-empty-icon">⚡</span>
 							<p>No tips found matching the filter.</p>
 						</div>
 					</td>
@@ -99,7 +98,7 @@
 								</span>
 							{:else}
 								<span class="mt-trigger-pill mt-trigger-instant" title="Paid immediately upon /tip command">
-									⚡ instant
+									instant
 								</span>
 							{/if}
 						</td>

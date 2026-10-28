@@ -42,7 +42,6 @@
 	<div class="mt-confirm-container">
 		{#if decision === 'approved'}
 			<div class="mt-result-card result-approved">
-				<div class="mt-result-icon">⚡</div>
 				<h2>Tip Authorized & Executed!</h2>
 				<p>
 					Dispatched <strong>{tipData.amount_sats.toLocaleString('en-US')} sats</strong> to <strong>@{tipData.receiver}</strong> over Nostr Wallet Connect.
@@ -58,7 +57,6 @@
 			</div>
 		{:else if decision === 'rejected'}
 			<div class="mt-result-card result-rejected">
-				<div class="mt-result-icon">🛑</div>
 				<h2>Tip Cancelled</h2>
 				<p>
 					The tip for {tipData.amount_sats.toLocaleString('en-US')} sats has been rejected. No funds were debited from your wallet.
@@ -73,7 +71,7 @@
 			<!-- Security Header -->
 			<div class="mt-confirm-header">
 				<div class="mt-warning-badge">
-					<Badge variant="expired" size="md">⚠️ Approval Required (FR-12)</Badge>
+					<Badge variant="expired" size="md">Approval Required (FR-12)</Badge>
 				</div>
 				<h1>High-Value Tip Confirmation</h1>
 				<p class="mt-confirm-desc">
@@ -153,7 +151,7 @@
 						disabled={processing}
 						onclick={rejectTip}
 					>
-						✕ Reject / Cancel
+						Reject Tip
 					</Button>
 					<Button
 						variant="primary"
@@ -161,7 +159,7 @@
 						loading={processing}
 						onclick={approveTip}
 					>
-						⚡ Authorize & Pay {tipData.amount_sats.toLocaleString('en-US')} Sats
+						Authorize & Pay {tipData.amount_sats.toLocaleString('en-US')} Sats
 					</Button>
 				</div>
 			</div>
