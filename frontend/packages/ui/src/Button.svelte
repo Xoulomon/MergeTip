@@ -27,7 +27,8 @@
 >
 	{#if loading}
 		<svg class="mt-btn-spinner" viewBox="0 0 24 24" fill="none">
-			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"
+			></circle>
 			<path
 				class="opacity-75"
 				fill="currentColor"
@@ -52,13 +53,21 @@
 		align-items: center;
 		justify-content: center;
 		gap: 6px;
-		border-radius: 6px;
+		border-radius: 8px;
 		cursor: pointer;
-		transition: all 0.15s ease-in-out;
+		transition:
+			transform var(--duration-fast, 120ms) var(--ease-out, ease-out),
+			background var(--duration-fast, 120ms) var(--ease-out, ease-out),
+			border-color var(--duration-fast, 120ms) var(--ease-out, ease-out),
+			box-shadow var(--duration-fast, 120ms) var(--ease-out, ease-out);
 		white-space: nowrap;
 		user-select: none;
 		line-height: 1.4;
 		text-decoration: none;
+	}
+
+	.mt-btn:active:not(:disabled) {
+		transform: scale(0.97);
 	}
 
 	.mt-btn:focus-visible {

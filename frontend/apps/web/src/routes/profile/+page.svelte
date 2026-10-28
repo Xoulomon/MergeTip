@@ -1,25 +1,42 @@
 <script lang="ts">
-	import { Button, Badge, Card, StatCard, TipTable, formatSats, formatFiatUSD, formatBitnobFiat, Modal } from '@mergetip/ui';
+	import {
+		Button,
+		Badge,
+		Card,
+		StatCard,
+		TipTable,
+		formatFiatUSD,
+		formatBitnobFiat,
+		Modal
+	} from '@mergetip/ui';
+	import { auth } from '../../lib/auth.svelte';
 
 	// Profile User State
-	const profile = {
-		handle: 'xoulomon',
-		name: 'Xoulomon',
-		title: 'Core Maintainer & Genesis Sponsor',
-		avatar: 'https://avatars.githubusercontent.com/u/75281652?v=4',
+	let activeHandle = $derived(auth.session.userHandle || 'xoulomon');
+	let activeName = $derived(auth.session.userName || 'Xoulomon');
+	let activeAvatar = $derived(auth.session.avatarUrl || `https://github.com/${activeHandle}.png`);
+
+	let profile = $derived({
+		handle: activeHandle,
+		name: activeName,
+		title:
+			auth.session.userHandle === 'xoulomon'
+				? 'Core Maintainer & Genesis Sponsor'
+				: 'Open-Source Contributor',
+		avatar: activeAvatar,
 		bio: 'Open-source maintainer and Lightning protocol advocate. Building MergeTip to give developers non-custodial, automated Bitcoin micro-rewards for every merged pull request.',
 		location: 'Decentralized / Remote',
-		lightningAddress: 'xoulomon@getalby.com',
-		nostrNpub: 'npub1xoulomon89a74cf8290e219b48c772e01',
-		githubUrl: 'https://github.com/xoulomon',
+		lightningAddress: auth.session.lightningAddress || `${activeHandle}@getalby.com`,
+		nostrNpub: auth.session.nostrPubkey || 'npub1xoulomon89a74cf8290e219b48c772e01',
+		githubUrl: `https://github.com/${activeHandle}`,
 		website: 'https://mergetip.dev',
 		joinedDate: 'March 2024',
 		totalTippedSats: 185000,
 		tipsCount: 42,
 		prsSponsored: 28,
 		contributorsCount: 19,
-		balanceSats: 385000
-	};
+		balanceSats: auth.session.walletBalanceSats || 385000
+	});
 
 	// Active tab
 	let activeTab = $state<'activity' | 'repos' | 'zap' | 'proofs'>('activity');
@@ -183,7 +200,8 @@
 						class="mt-avatar-large"
 						onerror={(e) => {
 							const el = e.currentTarget as HTMLImageElement;
-							el.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
+							el.src =
+								'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
 						}}
 					/>
 				</div>
@@ -228,10 +246,20 @@
 						<div class="mt-meta-chip">
 							<span>Member since {profile.joinedDate}</span>
 						</div>
-						<a href={profile.githubUrl} target="_blank" rel="noreferrer" class="mt-meta-chip mt-meta-link">
+						<a
+							href={profile.githubUrl}
+							target="_blank"
+							rel="noreferrer"
+							class="mt-meta-chip mt-meta-link"
+						>
 							<span>github.com/{profile.handle}</span>
 						</a>
-						<a href={profile.website} target="_blank" rel="noreferrer" class="mt-meta-chip mt-meta-link">
+						<a
+							href={profile.website}
+							target="_blank"
+							rel="noreferrer"
+							class="mt-meta-chip mt-meta-link"
+						>
 							<span>mergetip.dev</span>
 						</a>
 					</div>
@@ -259,7 +287,9 @@
 							<span class="mt-proto-tag">NPUB</span>
 							<div class="mt-card-details">
 								<span class="mt-card-label">Nostr Public Key</span>
-								<span class="mt-card-value">{profile.nostrNpub.slice(0, 14)}…{profile.nostrNpub.slice(-8)}</span>
+								<span class="mt-card-value"
+									>{profile.nostrNpub.slice(0, 14)}…{profile.nostrNpub.slice(-8)}</span
+								>
 							</div>
 							<button
 								class="mt-card-copy-btn"
@@ -396,9 +426,7 @@
 									>
 										View on GitHub
 									</a>
-									<a href="/settings" class="mt-repo-settings-btn">
-										Configure Caps
-									</a>
+									<a href="/settings" class="mt-repo-settings-btn"> Configure Caps </a>
 								</div>
 							{/snippet}
 						</Card>
@@ -429,7 +457,7 @@
 								<!-- svelte-ignore a11y_label_has_associated_control -->
 								<label class="mt-label">Select Amount (Sats)</label>
 								<div class="mt-presets-grid">
-									{#each tipPresets as preset}
+									{#each tipPresets as preset (preset)}
 										<button
 											type="button"
 											class="mt-preset-chip {tipAmountSats === preset ? 'chip-selected' : ''}"
@@ -481,13 +509,10 @@
 
 							<!-- Actions -->
 							<div class="mt-zap-actions">
-								<Button
-									variant="bolt"
-									size="lg"
-									loading={tipPaying}
-									onclick={handleSendTip}
-								>
-									{tipSuccess ? 'Payment Confirmed' : `Pay ${tipAmountSats.toLocaleString()} sats (${formatFiatUSD(tipAmountSats)})`}
+								<Button variant="bolt" size="lg" loading={tipPaying} onclick={handleSendTip}>
+									{tipSuccess
+										? 'Payment Confirmed'
+										: `Pay ${tipAmountSats.toLocaleString()} sats (${formatFiatUSD(tipAmountSats)})`}
 								</Button>
 								<Button variant="outline" size="lg" onclick={() => (showQrModal = true)}>
 									Show QR Code
@@ -507,7 +532,9 @@
 							<div class="mt-badge-item">
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Genesis Sponsor</span>
-									<span class="mt-badge-desc">One of the first 50 project sponsors on the MergeTip protocol.</span>
+									<span class="mt-badge-desc"
+										>One of the first 50 project sponsors on the MergeTip protocol.</span
+									>
 								</div>
 								<Badge variant="bolt" size="sm">Genesis</Badge>
 							</div>
@@ -515,7 +542,9 @@
 							<div class="mt-badge-item">
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Non-Custodial Purist</span>
-									<span class="mt-badge-desc">100% of tips funded directly through user-held NIP-47 wallet connect keys.</span>
+									<span class="mt-badge-desc"
+										>100% of tips funded directly through user-held NIP-47 wallet connect keys.</span
+									>
 								</div>
 								<Badge variant="paid" size="sm">Verified</Badge>
 							</div>
@@ -523,7 +552,9 @@
 							<div class="mt-badge-item">
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Pan-African Rail Supporter</span>
-									<span class="mt-badge-desc">Funded contributor payouts into Bitnob corridors across Nigeria, Ghana & Kenya.</span>
+									<span class="mt-badge-desc"
+										>Funded contributor payouts into Bitnob corridors across Nigeria, Ghana & Kenya.</span
+									>
 								</div>
 								<Badge variant="accent" size="sm">Active</Badge>
 							</div>
@@ -531,7 +562,9 @@
 							<div class="mt-badge-item">
 								<div class="mt-badge-info">
 									<span class="mt-badge-name">Instant Settlement Champion</span>
-									<span class="mt-badge-desc">Average merge-to-lightning payout velocity under 2.4 seconds.</span>
+									<span class="mt-badge-desc"
+										>Average merge-to-lightning payout velocity under 2.4 seconds.</span
+									>
 								</div>
 								<Badge variant="verifying" size="sm">Sub-3s</Badge>
 							</div>
@@ -584,12 +617,16 @@
 		<div class="mt-qr-frame">
 			<!-- SVG QR Code Placeholder -->
 			<svg width="180" height="180" viewBox="0 0 24 24" fill="currentColor" class="mt-qr-svg">
-				<path d="M2 2h8v8H2V2Zm2 2v4h4V4H4Zm10-2h8v8h-8V2Zm2 2v4h4V4h-4ZM2 14h8v8H2v-8Zm2 2v4h4v-4H4Zm14 2h4v4h-4v-4Zm-4-2h2v2h-2v-2Zm4-4h2v2h-2v-2Zm-4 4h2v2h-2v-2Zm2 2h2v2h-2v-2Z"></path>
+				<path
+					d="M2 2h8v8H2V2Zm2 2v4h4V4H4Zm10-2h8v8h-8V2Zm2 2v4h4V4h-4ZM2 14h8v8H2v-8Zm2 2v4h4v-4H4Zm14 2h4v4h-4v-4Zm-4-2h2v2h-2v-2Zm4-4h2v2h-2v-2Zm-4 4h2v2h-2v-2Zm2 2h2v2h-2v-2Z"
+				></path>
 			</svg>
 		</div>
 		<div class="mt-qr-meta">
 			<span class="mt-qr-address">{profile.lightningAddress}</span>
-			<p class="mt-qr-note">Scan with Phoenix, Zeus, Cash App, Alby Go, Strike, or any Lightning wallet.</p>
+			<p class="mt-qr-note">
+				Scan with Phoenix, Zeus, Cash App, Alby Go, Strike, or any Lightning wallet.
+			</p>
 		</div>
 	</div>
 
@@ -597,9 +634,7 @@
 		<Button variant="default" onclick={() => copyToClipboard(profile.lightningAddress, 'modal-ln')}>
 			{copyNotice === 'modal-ln' ? 'Copied' : 'Copy Address'}
 		</Button>
-		<Button variant="primary" onclick={() => (showQrModal = false)}>
-			Done
-		</Button>
+		<Button variant="primary" onclick={() => (showQrModal = false)}>Done</Button>
 	{/snippet}
 </Modal>
 
@@ -616,23 +651,13 @@
 
 		<div class="mt-form-group">
 			<label for="modal-amount" class="mt-label">Tip Amount (Sats)</label>
-			<input
-				id="modal-amount"
-				type="number"
-				class="mt-input"
-				bind:value={tipAmountSats}
-			/>
+			<input id="modal-amount" type="number" class="mt-input" bind:value={tipAmountSats} />
 			<span class="mt-form-hint">≈ {formatFiatUSD(tipAmountSats)} USD</span>
 		</div>
 
 		<div class="mt-form-group">
 			<label for="modal-memo" class="mt-label">Public Memo</label>
-			<input
-				id="modal-memo"
-				type="text"
-				class="mt-input"
-				bind:value={tipMemo}
-			/>
+			<input id="modal-memo" type="text" class="mt-input" bind:value={tipMemo} />
 		</div>
 
 		{#if tipSuccess}
@@ -643,14 +668,8 @@
 	</div>
 
 	{#snippet footer()}
-		<Button variant="outline" onclick={() => (showTipModal = false)}>
-			Cancel
-		</Button>
-		<Button
-			variant="bolt"
-			loading={tipPaying}
-			onclick={handleSendTip}
-		>
+		<Button variant="outline" onclick={() => (showTipModal = false)}>Cancel</Button>
+		<Button variant="bolt" loading={tipPaying} onclick={handleSendTip}>
 			{tipSuccess ? 'Settled' : `Pay ${tipAmountSats.toLocaleString()} sats`}
 		</Button>
 	{/snippet}

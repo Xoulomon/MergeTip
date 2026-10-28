@@ -2,11 +2,9 @@
 	import {
 		Button,
 		Badge,
-		Card,
 		StatCard,
 		Modal,
 		TipTable,
-		formatSats,
 		formatFiatUSD,
 		formatRelativeTime,
 		type TipRow
@@ -174,7 +172,9 @@
 					<Badge variant="bolt" size="sm">Sponsor Account</Badge>
 				</div>
 				<h1>Sponsor Dashboard</h1>
-				<p>Real-time monitoring of your Nostr Wallet Connect tips, active pledges and monthly caps.</p>
+				<p>
+					Real-time monitoring of your Nostr Wallet Connect tips, active pledges and monthly caps.
+				</p>
 			</div>
 
 			<div class="mt-header-actions">
@@ -260,19 +260,25 @@
 						class="mt-tab {selectedTab === 'paid' ? 'mt-tab-active' : ''}"
 						onclick={() => (selectedTab = 'paid')}
 					>
-						Paid <span class="mt-tab-count">{sampleTips.filter((t) => t.state === 'paid').length}</span>
+						Paid <span class="mt-tab-count"
+							>{sampleTips.filter((t) => t.state === 'paid').length}</span
+						>
 					</button>
 					<button
 						class="mt-tab {selectedTab === 'held' ? 'mt-tab-active' : ''}"
 						onclick={() => (selectedTab = 'held')}
 					>
-						Held on-merge <span class="mt-tab-count">{sampleTips.filter((t) => t.state === 'held').length}</span>
+						Held on-merge <span class="mt-tab-count"
+							>{sampleTips.filter((t) => t.state === 'held').length}</span
+						>
 					</button>
 					<button
 						class="mt-tab {selectedTab === 'pledged' ? 'mt-tab-active' : ''}"
 						onclick={() => (selectedTab = 'pledged')}
 					>
-						Pledged <span class="mt-tab-count">{sampleTips.filter((t) => t.state === 'pledged').length}</span>
+						Pledged <span class="mt-tab-count"
+							>{sampleTips.filter((t) => t.state === 'pledged').length}</span
+						>
 					</button>
 				</div>
 
@@ -294,7 +300,9 @@
 	<Modal
 		open={Boolean(selectedTip)}
 		title="Tip Transaction Details"
-		subtitle={selectedTip ? `${selectedTip.id} • ${formatRelativeTime(selectedTip.created_at)}` : ''}
+		subtitle={selectedTip
+			? `${selectedTip.id} • ${formatRelativeTime(selectedTip.created_at)}`
+			: ''}
 		onclose={() => (selectedTip = null)}
 	>
 		{#if selectedTip}
@@ -357,7 +365,9 @@
 
 					<div class="mt-detail-item full-width">
 						<span class="mt-detail-label">NWC Cryptographic Preimage</span>
-						<code class="mt-hash-code">0x4f8a129d8b37e2b109c8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6</code>
+						<code class="mt-hash-code"
+							>0x4f8a129d8b37e2b109c8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6</code
+						>
 					</div>
 				</div>
 			</div>
@@ -424,7 +434,7 @@
 						class="mt-text-input"
 					/>
 					<div class="mt-amount-presets">
-						{#each [500, 1000, 2100, 5000, 10000] as amt}
+						{#each [500, 1000, 2100, 5000, 10000] as amt (amt)}
 							<button
 								type="button"
 								class="mt-preset-chip {newAmount === amt ? 'chip-active' : ''}"

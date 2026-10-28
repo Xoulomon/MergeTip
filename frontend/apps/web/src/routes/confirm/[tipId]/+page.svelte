@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Button, Badge, Card, formatSats, formatFiatUSD } from '@mergetip/ui';
-
-	let tipId = $derived(page.params.tipId ?? 'demo-high-value');
+	import { Button, Badge, formatFiatUSD } from '@mergetip/ui';
 
 	let tipData = {
-		id: 'tip-hv-98a71',
+		id: page.params.tipId ?? 'tip-hv-98a71',
 		amount_sats: 25000,
 		sponsor: 'xoulomon',
 		receiver: 'sarah-core',
@@ -44,7 +42,8 @@
 			<div class="mt-result-card result-approved">
 				<h2>Tip Authorized & Executed!</h2>
 				<p>
-					Dispatched <strong>{tipData.amount_sats.toLocaleString('en-US')} sats</strong> to <strong>@{tipData.receiver}</strong> over Nostr Wallet Connect.
+					Dispatched <strong>{tipData.amount_sats.toLocaleString('en-US')} sats</strong> to
+					<strong>@{tipData.receiver}</strong> over Nostr Wallet Connect.
 				</p>
 				<p class="mt-receipt-proof">
 					Preimage: <code>0x89e1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d</code>
@@ -59,7 +58,8 @@
 			<div class="mt-result-card result-rejected">
 				<h2>Tip Cancelled</h2>
 				<p>
-					The tip for {tipData.amount_sats.toLocaleString('en-US')} sats has been rejected. No funds were debited from your wallet.
+					The tip for {tipData.amount_sats.toLocaleString('en-US')} sats has been rejected. No funds were
+					debited from your wallet.
 				</p>
 				<div class="mt-result-actions">
 					<Button variant="default" onclick={() => (window.location.href = '/dashboard')}>
@@ -75,7 +75,9 @@
 				</div>
 				<h1>High-Value Tip Confirmation</h1>
 				<p class="mt-confirm-desc">
-					This tip exceeds your automated approval threshold of <strong>{tipData.threshold_sats.toLocaleString('en-US')} sats</strong>. Please review the transaction details below before authorizing payment.
+					This tip exceeds your automated approval threshold of <strong
+						>{tipData.threshold_sats.toLocaleString('en-US')} sats</strong
+					>. Please review the transaction details below before authorizing payment.
 				</p>
 			</div>
 
@@ -99,7 +101,8 @@
 								class="mt-user-pic"
 								onerror={(e) => {
 									const el = e.currentTarget as HTMLImageElement;
-									el.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
+									el.src =
+										'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
 								}}
 							/>
 							<strong>@{tipData.receiver}</strong>
@@ -138,27 +141,19 @@
 								<div class="mt-mini-bar" style="width: 54%"></div>
 								<div class="mt-mini-pending" style="width: 25%"></div>
 							</div>
-							<span class="mt-mini-subtext">Used: 54,000 + This Tip: 25,000 = 79,000 / 100,000 sats</span>
+							<span class="mt-mini-subtext"
+								>Used: 54,000 + This Tip: 25,000 = 79,000 / 100,000 sats</span
+							>
 						</div>
 					</div>
 				</div>
 
 				<!-- Actions Bar -->
 				<div class="mt-action-footer">
-					<Button
-						variant="danger"
-						size="lg"
-						disabled={processing}
-						onclick={rejectTip}
-					>
+					<Button variant="danger" size="lg" disabled={processing} onclick={rejectTip}>
 						Reject Tip
 					</Button>
-					<Button
-						variant="primary"
-						size="lg"
-						loading={processing}
-						onclick={approveTip}
-					>
+					<Button variant="primary" size="lg" loading={processing} onclick={approveTip}>
 						Authorize & Pay {tipData.amount_sats.toLocaleString('en-US')} Sats
 					</Button>
 				</div>

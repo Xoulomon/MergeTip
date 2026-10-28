@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { formatSats, formatFiatUSD } from './format';
+	import { formatFiatUSD } from './format';
 
 	let {
 		label,
@@ -49,7 +49,8 @@
 		<div class="mt-stat-footer">
 			{#if trend}
 				<span class="mt-stat-trend {trendUp ? 'mt-trend-up' : 'mt-trend-down'}">
-					{trendUp ? '↑' : '↓'} {trend}
+					{trendUp ? '↑' : '↓'}
+					{trend}
 				</span>
 			{/if}
 			{#if subtitle}
@@ -61,22 +62,30 @@
 
 <style>
 	.mt-stat-card {
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
-		border-radius: 8px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 12px;
 		padding: 16px 18px;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
 		box-shadow: var(--mt-shadow-sm);
-		transition: all 0.2s ease-in-out;
+		transition:
+			transform var(--duration-normal) var(--ease-out),
+			box-shadow var(--duration-normal) var(--ease-out),
+			border-color var(--duration-normal) var(--ease-out);
 		position: relative;
 		overflow: hidden;
 	}
 
 	.mt-stat-card:hover {
-		box-shadow: var(--mt-shadow-md);
-		border-color: var(--mt-fg-subtle);
+		box-shadow:
+			var(--mt-shadow-md),
+			0 0 16px var(--mt-bolt-subtle);
+		border-color: var(--mt-bolt);
+		transform: translateY(-2px);
 	}
 
 	.mt-stat-header {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Badge from './Badge.svelte';
 	import Button from './Button.svelte';
-	import { formatSats, formatFiatUSD, formatRelativeTime } from './format';
+	import { formatFiatUSD, formatRelativeTime } from './format';
 
 	export interface TipRow {
 		id: string;
@@ -74,7 +74,8 @@
 									class="mt-avatar"
 									onerror={(e) => {
 										const el = e.currentTarget as HTMLImageElement;
-										el.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
+										el.src =
+											'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
 									}}
 								/>
 								<span class="mt-handle">@{tip.receiver}</span>
@@ -90,14 +91,22 @@
 
 						<td>
 							{#if tip.on_merge}
-								<span class="mt-trigger-pill mt-trigger-merge" title="Paid automatically when PR merges">
+								<span
+									class="mt-trigger-pill mt-trigger-merge"
+									title="Paid automatically when PR merges"
+								>
 									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-										<path d="M5.45 5.154A4.25 4.25 0 0 0 9.25 8h1.838a3.25 3.25 0 1 1 0 1.5H9.25A5.75 5.75 0 0 1 4 4.542V2.75a.75.75 0 0 1 1.5 0v2.404ZM13 10.75a1.75 1.75 0 1 0-3.5 0 1.75 1.75 0 0 0 3.5 0Z"></path>
+										<path
+											d="M5.45 5.154A4.25 4.25 0 0 0 9.25 8h1.838a3.25 3.25 0 1 1 0 1.5H9.25A5.75 5.75 0 0 1 4 4.542V2.75a.75.75 0 0 1 1.5 0v2.404ZM13 10.75a1.75 1.75 0 1 0-3.5 0 1.75 1.75 0 0 0 3.5 0Z"
+										></path>
 									</svg>
 									on-merge
 								</span>
 							{:else}
-								<span class="mt-trigger-pill mt-trigger-instant" title="Paid immediately upon /tip command">
+								<span
+									class="mt-trigger-pill mt-trigger-instant"
+									title="Paid immediately upon /tip command"
+								>
 									instant
 								</span>
 							{/if}
@@ -108,17 +117,13 @@
 						</td>
 
 						<td>
-							<span class="mt-time" title={tip.created_at}>{formatRelativeTime(tip.created_at)}</span>
+							<span class="mt-time" title={tip.created_at}
+								>{formatRelativeTime(tip.created_at)}</span
+							>
 						</td>
 
 						<td class="text-right">
-							<Button
-								size="sm"
-								variant="ghost"
-								onclick={() => onselect?.(tip)}
-							>
-								Details
-							</Button>
+							<Button size="sm" variant="ghost" onclick={() => onselect?.(tip)}>Details</Button>
 						</td>
 					</tr>
 				{/each}

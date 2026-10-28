@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Button, Badge, Card, formatSats, formatFiatUSD, formatBitnobFiat } from '@mergetip/ui';
-
-	// Tip context (from route params or simulated pledge)
-	let tipId = $derived(page.params.tipId ?? 'demo-tip-1');
+	import { Button, Badge, formatFiatUSD, formatBitnobFiat } from '@mergetip/ui';
 
 	// Sample tip data
 	const pledge = {
-		id: 'tip-pledge-8f2a1',
+		id: page.params.tipId ?? 'tip-pledge-8f2a1',
 		amount_sats: 5000,
 		sponsor: 'xoulomon',
 		receiver: 'alicesmith',
@@ -29,7 +26,9 @@
 
 	// In-browser Breez Spark wallet mock
 	let breezWalletCreated = $state(false);
-	let breezSeedPhrase = $state('abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about');
+	let breezSeedPhrase = $state(
+		'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
+	);
 
 	// Settlement status
 	let claiming = $state(false);
@@ -56,13 +55,18 @@
 			<div class="mt-receipt-card">
 				<h2>Sats Successfully Claimed!</h2>
 				<p class="mt-receipt-desc">
-					Your <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong> have been transferred via {claimTxReceipt.method}.
+					Your <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong> have been
+					transferred via {claimTxReceipt.method}.
 				</p>
 
 				<div class="mt-receipt-box">
 					<div class="mt-receipt-row">
 						<span>Settled Amount</span>
-						<strong>{pledge.amount_sats.toLocaleString('en-US')} sats ({formatFiatUSD(pledge.amount_sats)})</strong>
+						<strong
+							>{pledge.amount_sats.toLocaleString('en-US')} sats ({formatFiatUSD(
+								pledge.amount_sats
+							)})</strong
+						>
 					</div>
 					<div class="mt-receipt-row">
 						<span>Sponsor</span>
@@ -101,7 +105,8 @@
 
 				<h1>Claim your sats</h1>
 				<p class="mt-claim-intro">
-					You were tipped <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong> ({formatFiatUSD(pledge.amount_sats)}) by <strong>@{pledge.sponsor}</strong> for your contribution!
+					You were tipped <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong>
+					({formatFiatUSD(pledge.amount_sats)}) by <strong>@{pledge.sponsor}</strong> for your contribution!
 				</p>
 
 				<!-- Contribution Context Card -->
@@ -155,7 +160,10 @@
 					{#if activeClaimTab === 'lnurl'}
 						<div class="mt-method-panel">
 							<h3>Payout to Lightning Address</h3>
-							<p>Enter your Lightning address (e.g. Alby, Wallet of Satoshi, Coinos, Primal) for instantaneous transfer.</p>
+							<p>
+								Enter your Lightning address (e.g. Alby, Wallet of Satoshi, Coinos, Primal) for
+								instantaneous transfer.
+							</p>
 
 							<div class="mt-claim-field">
 								<label for="lnAddressInput">Your Lightning Address</label>
@@ -186,7 +194,10 @@
 					{#if activeClaimTab === 'breez'}
 						<div class="mt-method-panel">
 							<h3>Instant In-Browser Web Wallet (Breez Spark SDK)</h3>
-							<p>Don't have a Lightning wallet yet? Create a non-custodial WebAssembly wallet directly in your browser with 1 click.</p>
+							<p>
+								Don't have a Lightning wallet yet? Create a non-custodial WebAssembly wallet
+								directly in your browser with 1 click.
+							</p>
 
 							{#if !breezWalletCreated}
 								<div class="mt-spark-cta">
@@ -214,7 +225,8 @@
 									</div>
 
 									<div class="mt-seed-box">
-										<span class="mt-seed-title">Your 12-Word Recovery Seed Phrase (Save this):</span>
+										<span class="mt-seed-title">Your 12-Word Recovery Seed Phrase (Save this):</span
+										>
 										<code class="mt-seed-words">{breezSeedPhrase}</code>
 									</div>
 
@@ -235,7 +247,11 @@
 					{#if activeClaimTab === 'invoice'}
 						<div class="mt-method-panel">
 							<h3>One-Time Lightning Invoice (Bolt11)</h3>
-							<p>Generate a Lightning invoice for exactly <strong>{pledge.amount_sats.toLocaleString('en-US')} sats</strong> from any wallet and paste it here.</p>
+							<p>
+								Generate a Lightning invoice for exactly <strong
+									>{pledge.amount_sats.toLocaleString('en-US')} sats</strong
+								> from any wallet and paste it here.
+							</p>
 
 							<div class="mt-claim-field">
 								<label for="bolt11Input">Bolt11 Lightning Invoice</label>
@@ -244,8 +260,7 @@
 									rows="3"
 									placeholder="lnbc50u1p..."
 									bind:value={bolt11Invoice}
-									class="mt-form-input font-mono"
-								></textarea>
+									class="mt-form-input font-mono"></textarea>
 							</div>
 
 							<div class="mt-action-row">
@@ -266,7 +281,10 @@
 					{#if activeClaimTab === 'bitnob'}
 						<div class="mt-method-panel">
 							<h3>Local African Fiat Bank Transfer (Bitnob Payouts)</h3>
-							<p>Auto-convert your satoshi reward into local fiat currency deposited straight to your bank account or mobile money.</p>
+							<p>
+								Auto-convert your satoshi reward into local fiat currency deposited straight to your
+								bank account or mobile money.
+							</p>
 
 							<div class="mt-fiat-quote-pill">
 								<span>Estimated Payout:</span>
@@ -311,7 +329,10 @@
 									size="lg"
 									loading={claiming}
 									disabled={!fiatAccount}
-									onclick={() => executeClaim(`Bitnob Fiat Transfer (${formatBitnobFiat(pledge.amount_sats, fiatCurrency)})`)}
+									onclick={() =>
+										executeClaim(
+											`Bitnob Fiat Transfer (${formatBitnobFiat(pledge.amount_sats, fiatCurrency)})`
+										)}
 								>
 									Initiate Bank Payout via Bitnob
 								</Button>

@@ -1,8 +1,4 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import Button from './Button.svelte';
-	import Badge from './Badge.svelte';
-
 	let {
 		currentPath = '/',
 		relayConnected = true,
@@ -10,10 +6,14 @@
 		walletBalanceSats = 385000,
 		userHandle = 'xoulomon',
 		userName = 'Xoulomon',
+		avatarUrl,
 		lightningAddress = 'xoulomon@getalby.com',
 		nostrPubkey = 'npub1xoulomon89a74cf8290e219b48c',
+		isAuthenticated = true,
 		theme = 'dark',
-		ontoggletheme
+		ontoggletheme,
+		onlogin,
+		onlogout
 	}: {
 		currentPath?: string;
 		relayConnected?: boolean;
@@ -21,11 +21,19 @@
 		walletBalanceSats?: number;
 		userHandle?: string;
 		userName?: string;
+		avatarUrl?: string;
 		lightningAddress?: string;
 		nostrPubkey?: string;
+		isAuthenticated?: boolean;
 		theme?: 'dark' | 'light';
 		ontoggletheme?: () => void;
+		onlogin?: () => void;
+		onlogout?: () => void;
 	} = $props();
+
+	let resolvedAvatar = $derived(
+		avatarUrl || (userHandle ? `https://github.com/${userHandle}.png` : '')
+	);
 
 	let profileMenuOpen = $state(false);
 	let copiedField = $state<string | null>(null);
@@ -79,7 +87,10 @@
 				{#each navItems as item (item.href)}
 					<a
 						href={item.href}
-						class="mt-nav-link {currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)) ? 'mt-nav-link-active' : ''}"
+						class="mt-nav-link {currentPath === item.href ||
+						(item.href !== '/' && currentPath.startsWith(item.href))
+							? 'mt-nav-link-active'
+							: ''}"
 					>
 						{item.label}
 					</a>
@@ -91,13 +102,18 @@
 		<div class="mt-navbar-right">
 			<!-- Relay Status Pill -->
 			<div class="mt-status-pill" title="Nostr relay connection status">
-				<span class="mt-status-dot {relayConnected ? 'mt-status-online' : 'mt-status-offline'}"></span>
+				<span class="mt-status-dot {relayConnected ? 'mt-status-online' : 'mt-status-offline'}"
+				></span>
 				<span class="mt-status-text">{relayConnected ? 'Relay Active' : 'Relay Disconnected'}</span>
 			</div>
 
 			<!-- Wallet Balance Pill -->
 			{#if walletConnected}
-				<a href="/settings" class="mt-wallet-pill" title="Nostr Wallet Connect (NWC) connected balance">
+				<a
+					href="/settings"
+					class="mt-wallet-pill"
+					title="Nostr Wallet Connect (NWC) connected balance"
+				>
 					<span class="mt-wallet-amt">{walletBalanceSats.toLocaleString('en-US')}</span>
 					<span class="mt-wallet-unit">sats</span>
 				</a>
@@ -111,7 +127,14 @@
 				aria-label="Toggle theme"
 			>
 				{#if theme === 'dark'}
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<circle cx="12" cy="12" r="5"></circle>
 						<line x1="12" y1="1" x2="12" y2="3"></line>
 						<line x1="12" y1="21" x2="12" y2="23"></line>
@@ -123,183 +146,245 @@
 						<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
 					</svg>
 				{:else}
-					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<svg
+						width="15"
+						height="15"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
 						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
 					</svg>
 				{/if}
 			</button>
 
-			<!-- GitHub User Profile Pill & Dropdown -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="mt-profile-wrapper" onclick={(e) => e.stopPropagation()} onkeydown={() => {}}>
-				<button
-					class="mt-user-pill-btn {profileMenuOpen ? 'mt-user-pill-active' : ''}"
-					onclick={toggleProfileMenu}
-					aria-haspopup="true"
-					aria-expanded={profileMenuOpen}
-					aria-label="User profile and protocol menu for @{userHandle}"
-				>
-					<div class="mt-avatar-container">
-						<img
-							src="https://avatars.githubusercontent.com/u/75281652?v=4"
-							alt="@{userHandle}"
-							class="mt-user-avatar"
-							onerror={(e) => {
-								const el = e.currentTarget as HTMLImageElement;
-								el.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
-							}}
-						/>
-						<span class="mt-avatar-dot" title="Active Sponsor"></span>
-					</div>
-					<div class="mt-user-meta">
-						<span class="mt-user-name">@{userHandle}</span>
-					</div>
-					<svg
-						class="mt-chevron {profileMenuOpen ? 'mt-chevron-up' : ''}"
-						width="12"
-						height="12"
-						viewBox="0 0 16 16"
-						fill="currentColor"
+			{#if isAuthenticated && userHandle}
+				<!-- GitHub User Profile Pill & Dropdown -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div class="mt-profile-wrapper" onclick={(e) => e.stopPropagation()} onkeydown={() => {}}>
+					<button
+						class="mt-user-pill-btn {profileMenuOpen ? 'mt-user-pill-active' : ''}"
+						onclick={toggleProfileMenu}
+						aria-haspopup="true"
+						aria-expanded={profileMenuOpen}
+						aria-label="User profile and protocol menu for @{userHandle}"
 					>
-						<path d="M12.78 6.22a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L3.22 7.28a.75.75 0 0 1 1.06-1.06L8 9.94l3.72-3.72a.75.75 0 0 1 1.06 0Z"></path>
-					</svg>
-				</button>
+						<div class="mt-avatar-container">
+							<img
+								src={resolvedAvatar}
+								alt="@{userHandle}"
+								class="mt-user-avatar"
+								onerror={(e) => {
+									const el = e.currentTarget as HTMLImageElement;
+									el.src =
+										'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%239198a1"><circle cx="12" cy="12" r="10"/></svg>';
+								}}
+							/>
+							<span class="mt-avatar-dot" title="Active Sponsor"></span>
+						</div>
+						<div class="mt-user-meta">
+							<span class="mt-user-name">@{userHandle}</span>
+						</div>
+						<svg
+							class="mt-chevron {profileMenuOpen ? 'mt-chevron-up' : ''}"
+							width="12"
+							height="12"
+							viewBox="0 0 16 16"
+							fill="currentColor"
+						>
+							<path
+								d="M12.78 6.22a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L3.22 7.28a.75.75 0 0 1 1.06-1.06L8 9.94l3.72-3.72a.75.75 0 0 1 1.06 0Z"
+							></path>
+						</svg>
+					</button>
 
-				{#if profileMenuOpen}
-					<div class="mt-profile-dropdown" role="menu" aria-label="Profile navigation menu">
-						<!-- Dropdown Header -->
-						<div class="mt-drop-header">
-							<div class="mt-drop-user-row">
-								<div class="mt-drop-avatar-wrap">
-									<img
-										src="https://avatars.githubusercontent.com/u/75281652?v=4"
-										alt="@{userHandle}"
-										class="mt-drop-avatar"
-									/>
-								</div>
-								<div class="mt-drop-user-info">
-									<div class="mt-drop-name-row">
-										<span class="mt-drop-name">{userName}</span>
-										<span class="mt-drop-role-pill">Core Sponsor</span>
+					{#if profileMenuOpen}
+						<div class="mt-profile-dropdown" role="menu" aria-label="Profile navigation menu">
+							<!-- Dropdown Header -->
+							<div class="mt-drop-header">
+								<div class="mt-drop-user-row">
+									<div class="mt-drop-avatar-wrap">
+										<img src={resolvedAvatar} alt="@{userHandle}" class="mt-drop-avatar" />
 									</div>
-									<a
-										href="https://github.com/{userHandle}"
-										target="_blank"
-										rel="noreferrer"
-										class="mt-drop-handle"
+									<div class="mt-drop-user-info">
+										<div class="mt-drop-name-row">
+											<span class="mt-drop-name">{userName || userHandle}</span>
+											<span class="mt-drop-role-pill">Connected</span>
+										</div>
+										<a
+											href="https://github.com/{userHandle}"
+											target="_blank"
+											rel="noreferrer"
+											class="mt-drop-handle"
+										>
+											@{userHandle}
+											<svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+												<path
+													d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.75.75a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0V4.56L9.28 9.28a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l4.69-4.72h-1.69a.75.75 0 0 1-.75-.75Z"
+												></path>
+											</svg>
+										</a>
+									</div>
+								</div>
+
+								<!-- Lightning Address & Nostr Pubkey quick copy -->
+								<div class="mt-protocol-pills">
+									<!-- Lightning Address -->
+									<div class="mt-proto-pill">
+										<span class="mt-proto-tag">LN</span>
+										<span class="mt-proto-text" title={lightningAddress}>{lightningAddress}</span>
+										<button
+											class="mt-proto-copy"
+											onclick={(e) => copyField(lightningAddress, 'ln', e)}
+											title="Copy Lightning Address"
+										>
+											{copiedField === 'ln' ? 'Copied' : 'Copy'}
+										</button>
+									</div>
+
+									<!-- Nostr npub -->
+									<div class="mt-proto-pill">
+										<span class="mt-proto-tag">NPUB</span>
+										<span class="mt-proto-text" title={nostrPubkey}
+											>{nostrPubkey.slice(0, 10)}…{nostrPubkey.slice(-4)}</span
+										>
+										<button
+											class="mt-proto-copy"
+											onclick={(e) => copyField(nostrPubkey, 'nostr', e)}
+											title="Copy Nostr Pubkey"
+										>
+											{copiedField === 'nostr' ? 'Copied' : 'Copy'}
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Wallet & Stats Snapshot -->
+							<div class="mt-drop-stats">
+								<div class="mt-drop-stat">
+									<span class="mt-drop-stat-label">Wallet Balance</span>
+									<span class="mt-drop-stat-val"
+										>{walletBalanceSats.toLocaleString('en-US')} <small>sats</small></span
 									>
-										@{userHandle}
-										<svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
-											<path d="M3.75 2h3.5a.75.75 0 0 1 0 1.5h-3.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-3.5a.75.75 0 0 1 1.5 0v3.5A1.75 1.75 0 0 1 12.25 14h-8.5A1.75 1.75 0 0 1 2 12.25v-8.5C2 2.784 2.784 2 3.75 2Zm6.75.75a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0V4.56L9.28 9.28a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l4.69-4.72h-1.69a.75.75 0 0 1-.75-.75Z"></path>
-										</svg>
-									</a>
+								</div>
+								<div class="mt-drop-stat">
+									<span class="mt-drop-stat-label">Total Disbursed</span>
+									<span class="mt-drop-stat-val">185,000 <small>sats</small></span>
 								</div>
 							</div>
 
-							<!-- Lightning Address & Nostr Pubkey quick copy -->
-							<div class="mt-protocol-pills">
-								<!-- Lightning Address -->
-								<div class="mt-proto-pill">
-									<span class="mt-proto-tag">LN</span>
-									<span class="mt-proto-text" title={lightningAddress}>{lightningAddress}</span>
-									<button
-										class="mt-proto-copy"
-										onclick={(e) => copyField(lightningAddress, 'ln', e)}
-										title="Copy Lightning Address"
-									>
-										{copiedField === 'ln' ? 'Copied' : 'Copy'}
-									</button>
-								</div>
+							<!-- Menu Navigation Items -->
+							<div class="mt-drop-menu">
+								<a href="/profile" class="mt-drop-item" onclick={closeMenu} role="menuitem">
+									<div class="mt-item-text">
+										<span class="mt-item-title">Public Contributor Profile</span>
+										<span class="mt-item-desc">View verified badges, stats and tips</span>
+									</div>
+								</a>
 
-								<!-- Nostr npub -->
-								<div class="mt-proto-pill">
-									<span class="mt-proto-tag">NPUB</span>
-									<span class="mt-proto-text" title={nostrPubkey}>{nostrPubkey.slice(0, 10)}…{nostrPubkey.slice(-4)}</span>
-									<button
-										class="mt-proto-copy"
-										onclick={(e) => copyField(nostrPubkey, 'nostr', e)}
-										title="Copy Nostr Pubkey"
-									>
-										{copiedField === 'nostr' ? 'Copied' : 'Copy'}
-									</button>
+								<a href="/dashboard" class="mt-drop-item" onclick={closeMenu} role="menuitem">
+									<div class="mt-item-text">
+										<span class="mt-item-title">Sponsor Dashboard</span>
+										<span class="mt-item-desc">Spending caps and live tip stream</span>
+									</div>
+								</a>
+
+								<a href="/settings" class="mt-drop-item" onclick={closeMenu} role="menuitem">
+									<div class="mt-item-text">
+										<span class="mt-item-title">Protocol & Wallet Settings</span>
+										<span class="mt-item-desc">NWC keys, GitHub apps and fiat rails</span>
+									</div>
+								</a>
+
+								<a
+									href="https://github.com/{userHandle}"
+									target="_blank"
+									rel="noreferrer"
+									class="mt-drop-item"
+									role="menuitem"
+								>
+									<div class="mt-item-text">
+										<span class="mt-item-title">GitHub Profile</span>
+										<span class="mt-item-desc">github.com/{userHandle}</span>
+									</div>
+								</a>
+							</div>
+
+							<!-- Account Actions: Switch & Logout -->
+							<div class="mt-drop-actions">
+								<button
+									type="button"
+									class="mt-drop-action-btn"
+									onclick={() => {
+										closeMenu();
+										onlogin?.();
+									}}
+								>
+									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+										<path
+											d="M5.22 14.78a.75.75 0 0 0 1.06-1.06L4.56 12h8.69a.75.75 0 0 0 0-1.5H4.56l1.72-1.72a.75.75 0 0 0-1.06-1.06l-3 3a.75.75 0 0 0 0 1.06l3 3Zm5.56-6.5a.75.75 0 0 0-1.06-1.06L11.44 5.5H2.75a.75.75 0 0 0 0 1.5h8.69l-1.72 1.72a.75.75 0 0 0 1.06 1.06l3-3a.75.75 0 0 0 0-1.06l-3-3Z"
+										/>
+									</svg>
+									<span>Switch GitHub Account</span>
+								</button>
+
+								<button
+									type="button"
+									class="mt-drop-action-btn mt-action-logout"
+									onclick={() => {
+										closeMenu();
+										onlogout?.();
+									}}
+								>
+									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+										<path
+											d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Zm10.44 4.5H6.75a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72Z"
+										/>
+									</svg>
+									<span>Log Out</span>
+								</button>
+							</div>
+
+							<!-- Dropdown Footer -->
+							<div class="mt-drop-footer">
+								<div class="mt-drop-status-row">
+									<span class="mt-status-dot mt-status-online"></span>
+									<span class="mt-drop-status-text">NWC Handshake Verified</span>
 								</div>
+								<a href="/settings" class="mt-drop-switch-link" onclick={closeMenu}>
+									Manage Keys
+								</a>
 							</div>
 						</div>
-
-						<!-- Wallet & Stats Snapshot -->
-						<div class="mt-drop-stats">
-							<div class="mt-drop-stat">
-								<span class="mt-drop-stat-label">Wallet Balance</span>
-								<span class="mt-drop-stat-val">{walletBalanceSats.toLocaleString('en-US')} <small>sats</small></span>
-							</div>
-							<div class="mt-drop-stat">
-								<span class="mt-drop-stat-label">Total Disbursed</span>
-								<span class="mt-drop-stat-val">185,000 <small>sats</small></span>
-							</div>
-						</div>
-
-						<!-- Menu Navigation Items -->
-						<div class="mt-drop-menu">
-							<a href="/profile" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-text">
-									<span class="mt-item-title">Public Contributor Profile</span>
-									<span class="mt-item-desc">View verified badges, stats and tips</span>
-								</div>
-							</a>
-
-							<a href="/dashboard" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-text">
-									<span class="mt-item-title">Sponsor Dashboard</span>
-									<span class="mt-item-desc">Spending caps and live tip stream</span>
-								</div>
-							</a>
-
-							<a href="/settings" class="mt-drop-item" onclick={closeMenu} role="menuitem">
-								<div class="mt-item-text">
-									<span class="mt-item-title">Protocol & Wallet Settings</span>
-									<span class="mt-item-desc">NWC keys, GitHub apps and fiat rails</span>
-								</div>
-							</a>
-
-							<a
-								href="https://github.com/{userHandle}"
-								target="_blank"
-								rel="noreferrer"
-								class="mt-drop-item"
-								role="menuitem"
-							>
-								<div class="mt-item-text">
-									<span class="mt-item-title">GitHub Profile</span>
-									<span class="mt-item-desc">github.com/{userHandle}</span>
-								</div>
-							</a>
-						</div>
-
-						<!-- Dropdown Footer -->
-						<div class="mt-drop-footer">
-							<div class="mt-drop-status-row">
-								<span class="mt-status-dot mt-status-online"></span>
-								<span class="mt-drop-status-text">NWC Handshake Verified</span>
-							</div>
-							<a href="/settings" class="mt-drop-switch-link" onclick={closeMenu}>
-								Manage Keys
-							</a>
-						</div>
-					</div>
-				{/if}
-			</div>
+					{/if}
+				</div>
+			{:else}
+				<button type="button" class="mt-login-btn" onclick={onlogin}>
+					<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+						<path
+							d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+						></path>
+					</svg>
+					<span>Connect GitHub</span>
+				</button>
+			{/if}
 		</div>
 	</div>
 </header>
 
 <style>
 	.mt-navbar {
-		background: var(--mt-surface);
-		border-bottom: 1px solid var(--mt-border);
+		background: var(--mt-glass-bg);
+		border-bottom: 1px solid var(--mt-glass-border);
 		position: sticky;
 		top: 0;
 		z-index: 40;
-		backdrop-filter: blur(8px);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		transition:
+			background var(--duration-normal) var(--ease-out),
+			border-color var(--duration-normal) var(--ease-out);
 	}
 
 	.mt-navbar-container {
@@ -419,7 +504,9 @@
 		color: var(--mt-fg);
 		font-size: 13px;
 		font-weight: 600;
-		transition: transform 0.15s ease, box-shadow 0.15s ease;
+		transition:
+			transform 0.15s ease,
+			box-shadow 0.15s ease;
 	}
 
 	.mt-wallet-pill:hover {
@@ -548,7 +635,9 @@
 		background: var(--mt-surface);
 		border: 1px solid var(--mt-border-glow);
 		border-radius: 12px;
-		box-shadow: 0 12px 32px var(--mt-shadow), 0 0 0 1px var(--mt-border);
+		box-shadow:
+			0 12px 32px var(--mt-shadow),
+			0 0 0 1px var(--mt-border);
 		z-index: 100;
 		overflow: hidden;
 		animation: dropFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -841,6 +930,76 @@
 
 	.mt-drop-switch-link:hover {
 		text-decoration: underline;
+	}
+
+	.mt-login-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		background: var(--mt-accent);
+		color: var(--mt-accent-fg);
+		border: 1px solid rgba(27, 31, 36, 0.15);
+		border-radius: 8px;
+		padding: 6px 14px;
+		font-size: 13px;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+		transition:
+			transform var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			background var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			box-shadow var(--duration-fast, 140ms) var(--ease-out, ease-out);
+	}
+
+	.mt-login-btn:hover {
+		background: var(--mt-accent-hover);
+		box-shadow: 0 2px 6px rgba(46, 160, 67, 0.25);
+		transform: translateY(-1px);
+	}
+
+	.mt-login-btn:active {
+		transform: scale(0.97);
+	}
+
+	.mt-drop-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding: 8px;
+		border-top: 1px solid var(--mt-border);
+		background: var(--mt-surface-subtle);
+	}
+
+	.mt-drop-action-btn {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: 100%;
+		padding: 8px 10px;
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--mt-fg);
+		cursor: pointer;
+		text-align: left;
+		transition:
+			background var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			color var(--duration-fast, 140ms) var(--ease-out, ease-out);
+	}
+
+	.mt-drop-action-btn:hover {
+		background: var(--mt-surface-hover);
+	}
+
+	.mt-action-logout {
+		color: var(--mt-danger);
+	}
+
+	.mt-action-logout:hover {
+		background: var(--mt-danger-bg);
+		color: var(--mt-danger);
 	}
 
 	@media (max-width: 860px) {

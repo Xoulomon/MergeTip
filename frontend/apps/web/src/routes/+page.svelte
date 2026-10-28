@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Badge, Card, formatSats, formatFiatUSD } from '@mergetip/ui';
+	import { Button, Badge, formatFiatUSD } from '@mergetip/ui';
 
 	// Interactive playground state
 	let commandInput = $state('/tip @reviewer 2100 for the thorough review');
@@ -8,12 +8,12 @@
 	function parseTipCommand(text: string) {
 		const trimmed = text.trim();
 		const match = trimmed.match(
-			/^\/tip\s+@([a-zA-Z0-9_\-]+)\s+(\d+(?:\.\d+)?)(k|sats)?(?:\s+(on-merge))?(?:\s+(?:for\s+)?(.+))?$/i
+			/^\/tip\s+@([a-zA-Z0-9_-]+)\s+(\d+(?:\.\d+)?)(k|sats)?(?:\s+(on-merge))?(?:\s+(?:for\s+)?(.+))?$/i
 		);
 
 		if (!match) {
 			// Fallback tolerant parser for demo
-			const receiverMatch = trimmed.match(/@([a-zA-Z0-9_\-]+)/);
+			const receiverMatch = trimmed.match(/@([a-zA-Z0-9_-]+)/);
 			const numMatch = trimmed.match(/(\d+(?:\.\d+)?)(k)?/i);
 			const onMerge = /on-merge/i.test(trimmed);
 			const forMatch = trimmed.match(/(?:for\s+)(.+)$/i);
@@ -26,10 +26,10 @@
 
 			return {
 				valid: Boolean(receiverMatch),
-				receiver: (receiverMatch && receiverMatch[1]) ? receiverMatch[1] : 'contributor',
+				receiver: receiverMatch && receiverMatch[1] ? receiverMatch[1] : 'contributor',
 				amount_sats: sats,
 				on_merge: onMerge,
-				note: (forMatch && forMatch[1]) ? forMatch[1] : 'thank you for your contribution'
+				note: forMatch && forMatch[1] ? forMatch[1] : 'thank you for your contribution'
 			};
 		}
 
@@ -65,11 +65,14 @@
 			</div>
 
 			<h1 class="mt-hero-title">
-				Tip open-source contributors in <span class="mt-highlight">sats</span>, straight from GitHub.
+				Tip open-source contributors in <span class="mt-highlight">sats</span>, straight from
+				GitHub.
 			</h1>
 
 			<p class="mt-hero-desc">
-				Reward code reviews, merged pull requests, bug triage and documentation instantly. Senders pay from their own wallet over <strong>Nostr Wallet Connect (NWC)</strong>; receivers get paid to their <strong>Lightning address</strong>.
+				Reward code reviews, merged pull requests, bug triage and documentation instantly. Senders
+				pay from their own wallet over <strong>Nostr Wallet Connect (NWC)</strong>; receivers get
+				paid to their <strong>Lightning address</strong>.
 			</p>
 
 			<div class="mt-hero-actions">
@@ -79,7 +82,11 @@
 				<Button variant="default" size="lg" onclick={() => (window.location.href = '/dashboard')}>
 					Explore Dashboard
 				</Button>
-				<Button variant="outline" size="lg" onclick={() => (window.location.href = '/claim/demo-tip-1')}>
+				<Button
+					variant="outline"
+					size="lg"
+					onclick={() => (window.location.href = '/claim/demo-tip-1')}
+				>
 					Claim Demo Tip
 				</Button>
 			</div>
@@ -106,7 +113,10 @@
 		<div class="mt-section-header">
 			<Badge variant="bolt">Interactive Demo</Badge>
 			<h2>Try the <code>/tip</code> command in action</h2>
-			<p>Type any `/tip` syntax below or pick a preset to see the live parser, breakdown and bot reply.</p>
+			<p>
+				Type any `/tip` syntax below or pick a preset to see the live parser, breakdown and bot
+				reply.
+			</p>
 		</div>
 
 		<div class="mt-playground-container">
@@ -139,8 +149,7 @@
 							bind:value={commandInput}
 							rows="3"
 							placeholder="/tip @username 2100 [on-merge] [for note]"
-							spellcheck="false"
-						></textarea>
+							spellcheck="false"></textarea>
 
 						<div class="mt-parser-breakdown">
 							<div class="mt-breakdown-row">
@@ -187,21 +196,31 @@
 
 					<div class="mt-bot-content">
 						<p class="mt-bot-lead">
-							<strong>@{parsedData.receiver}</strong> was tipped <strong>{parsedData.amount_sats.toLocaleString('en-US')} sats</strong> ({formatFiatUSD(parsedData.amount_sats)})
+							<strong>@{parsedData.receiver}</strong> was tipped
+							<strong>{parsedData.amount_sats.toLocaleString('en-US')} sats</strong>
+							({formatFiatUSD(parsedData.amount_sats)})
 						</p>
 
 						{#if parsedData.on_merge}
 							<div class="mt-bot-alert mt-alert-held">
-								<span>Pledged on-merge: Sats will automatically transfer when this pull request is merged.</span>
+								<span
+									>Pledged on-merge: Sats will automatically transfer when this pull request is
+									merged.</span
+								>
 							</div>
 						{:else}
 							<div class="mt-bot-alert mt-alert-paid">
-								<span>Settled over Lightning via Nostr Wallet Connect. Preimage: <code>0x4f8a...92b1</code></span>
+								<span
+									>Settled over Lightning via Nostr Wallet Connect. Preimage: <code
+										>0x4f8a...92b1</code
+									></span
+								>
 							</div>
 						{/if}
 
 						<div class="mt-bot-footer">
-							<a href="/claim/demo-tip-1" class="mt-bot-link">Claim with custom Lightning address</a>
+							<a href="/claim/demo-tip-1" class="mt-bot-link">Claim with custom Lightning address</a
+							>
 							<span class="mt-bot-divider">•</span>
 							<a href="/dashboard" class="mt-bot-link">View in MergeTip</a>
 						</div>
@@ -216,14 +235,17 @@
 		<div class="mt-section-header">
 			<Badge variant="accent">Key Architecture</Badge>
 			<h2>Built for trust, speed and global sovereignty</h2>
-			<p>Every layer of MergeTip is designed around open protocols with zero custodial liability.</p>
+			<p>
+				Every layer of MergeTip is designed around open protocols with zero custodial liability.
+			</p>
 		</div>
 
 		<div class="mt-pillars-grid">
 			<div class="mt-pillar-card">
 				<h3>Nostr Wallet Connect</h3>
 				<p>
-					Payments are initiated directly from your existing wallet (Alby, Mutiny, Umbrel, raspiblitz) via NIP-47 with envelope encryption (NIP-44) and budget caps.
+					Payments are initiated directly from your existing wallet (Alby, Mutiny, Umbrel,
+					raspiblitz) via NIP-47 with envelope encryption (NIP-44) and budget caps.
 				</p>
 				<div class="mt-pillar-tags">
 					<span>NIP-47</span>
@@ -235,7 +257,8 @@
 			<div class="mt-pillar-card">
 				<h3>Lightning Address Protocol</h3>
 				<p>
-					Receivers get paid directly to their Lightning address (e.g. <code>alice@getalby.com</code>) via LNURL-pay with sub-second finality and zero manual invoicing.
+					Receivers get paid directly to their Lightning address (e.g. <code>alice@getalby.com</code
+					>) via LNURL-pay with sub-second finality and zero manual invoicing.
 				</p>
 				<div class="mt-pillar-tags">
 					<span>LNURL-pay</span>
@@ -247,7 +270,8 @@
 			<div class="mt-pillar-card">
 				<h3>Pledges & Breez Spark SDK</h3>
 				<p>
-					If a contributor hasn't set up a Lightning address yet, tips are held as cryptographic pledges. They can claim anytime via an instant in-browser WebAssembly wallet.
+					If a contributor hasn't set up a Lightning address yet, tips are held as cryptographic
+					pledges. They can claim anytime via an instant in-browser WebAssembly wallet.
 				</p>
 				<div class="mt-pillar-tags">
 					<span>Breez Spark SDK</span>
@@ -259,7 +283,8 @@
 			<div class="mt-pillar-card">
 				<h3>Local African Fiat Rails</h3>
 				<p>
-					Through the Bitnob Payouts API integration, contributors in Nigeria, Ghana and Kenya can automatically convert sats into local bank or mobile money deposits.
+					Through the Bitnob Payouts API integration, contributors in Nigeria, Ghana and Kenya can
+					automatically convert sats into local bank or mobile money deposits.
 				</p>
 				<div class="mt-pillar-tags">
 					<span>NGN (₦)</span>
@@ -281,7 +306,10 @@
 			<div class="mt-step-item">
 				<div class="mt-step-num">1</div>
 				<h4>Install & Connect</h4>
-				<p>Install the MergeTip GitHub App onto your organization and link your NWC wallet URI with your preferred budget caps.</p>
+				<p>
+					Install the MergeTip GitHub App onto your organization and link your NWC wallet URI with
+					your preferred budget caps.
+				</p>
 			</div>
 
 			<div class="mt-step-arrow">→</div>
@@ -289,7 +317,10 @@
 			<div class="mt-step-item">
 				<div class="mt-step-num">2</div>
 				<h4>Comment <code>/tip</code></h4>
-				<p>Leave a <code>/tip @contributor 2100 on-merge</code> comment on any review or pull request. Pure grammar parser checks work verification.</p>
+				<p>
+					Leave a <code>/tip @contributor 2100 on-merge</code> comment on any review or pull request.
+					Pure grammar parser checks work verification.
+				</p>
 			</div>
 
 			<div class="mt-step-arrow">→</div>
@@ -297,7 +328,10 @@
 			<div class="mt-step-item">
 				<div class="mt-step-num">3</div>
 				<h4>Instant Settlement</h4>
-				<p>The worker executes the payment over NWC and posts a verified receipt with preimage proof straight into the GitHub thread.</p>
+				<p>
+					The worker executes the payment over NWC and posts a verified receipt with preimage proof
+					straight into the GitHub thread.
+				</p>
 			</div>
 		</div>
 	</section>
@@ -329,7 +363,10 @@
 		<div class="mt-cta-card">
 			<div class="mt-cta-content">
 				<h2>Start tipping open-source contributors today</h2>
-				<p>Boost code review velocity, attract top maintainers, and fuel open-source development with satoshi micro-rewards.</p>
+				<p>
+					Boost code review velocity, attract top maintainers, and fuel open-source development with
+					satoshi micro-rewards.
+				</p>
 				<div class="mt-cta-buttons">
 					<Button variant="bolt" size="lg" onclick={() => (window.location.href = '/settings')}>
 						Connect Wallet (NWC)
@@ -355,7 +392,7 @@
 	.mt-hero {
 		padding: 72px 16px 48px 16px;
 		text-align: center;
-		background: radial-gradient(circle at 50% 10%, var(--mt-bolt-glow) 0%, transparent 60%);
+		position: relative;
 	}
 
 	.mt-hero-container {
@@ -365,20 +402,32 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 20px;
+		position: relative;
+		z-index: 2;
 	}
 
 	.mt-eyebrow {
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
 		border-radius: 9999px;
-		padding: 4px 14px 4px 10px;
+		padding: 5px 14px 5px 12px;
 		font-size: 13px;
 		font-weight: 500;
 		color: var(--mt-fg);
 		box-shadow: var(--mt-shadow-sm);
+		transition:
+			transform var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			border-color var(--duration-fast, 140ms) var(--ease-out, ease-out);
+	}
+
+	.mt-eyebrow:hover {
+		transform: translateY(-1px);
+		border-color: var(--mt-bolt);
 	}
 
 	.mt-eyebrow-bolt {
@@ -405,8 +454,12 @@
 	}
 
 	.mt-highlight {
-		color: var(--mt-bolt);
-		text-shadow: 0 0 20px var(--mt-bolt-glow);
+		background: linear-gradient(135deg, #f0c354 0%, #e3b341 50%, #fde047 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		display: inline-block;
+		filter: drop-shadow(0 0 20px rgba(240, 195, 84, 0.45));
+		position: relative;
 	}
 
 	.mt-hero-desc {
@@ -480,9 +533,11 @@
 	}
 
 	.mt-playground-container {
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
-		border-radius: 12px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 14px;
 		padding: 24px;
 		box-shadow: var(--mt-shadow-md);
 	}
@@ -504,26 +559,36 @@
 	}
 
 	.mt-preset-btn {
-		background: var(--mt-bg-subtle);
+		background: var(--mt-btn-bg);
 		border: 1px solid var(--mt-border);
-		border-radius: 6px;
-		padding: 4px 10px;
+		border-radius: 8px;
+		padding: 6px 12px;
 		font-size: 12px;
+		font-weight: 500;
 		color: var(--mt-fg);
 		cursor: pointer;
-		transition: all 0.15s ease;
+		transition:
+			transform var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			background var(--duration-fast, 140ms) var(--ease-out, ease-out),
+			border-color var(--duration-fast, 140ms) var(--ease-out, ease-out);
 	}
 
 	.mt-preset-btn:hover {
 		background: var(--mt-surface-hover);
-		border-color: var(--mt-fg-subtle);
+		border-color: var(--mt-bolt);
+		transform: translateY(-1px);
+	}
+
+	.mt-preset-btn:active {
+		transform: scale(0.97);
 	}
 
 	.mt-preset-active {
 		background: var(--mt-bolt-subtle);
 		border-color: var(--mt-bolt);
-		color: var(--mt-fg);
+		color: var(--mt-bolt-fg, var(--mt-fg));
 		font-weight: 600;
+		box-shadow: 0 0 12px var(--mt-bolt-subtle);
 	}
 
 	.mt-playground-grid {
@@ -753,21 +818,28 @@
 	}
 
 	.mt-pillar-card {
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
-		border-radius: 10px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 14px;
 		padding: 24px;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
 		box-shadow: var(--mt-shadow-sm);
-		transition: all 0.2s ease;
+		transition:
+			transform var(--duration-normal, 220ms) var(--ease-out, ease-out),
+			border-color var(--duration-normal, 220ms) var(--ease-out, ease-out),
+			box-shadow var(--duration-normal, 220ms) var(--ease-out, ease-out);
 	}
 
 	.mt-pillar-card:hover {
-		transform: translateY(-2px);
-		border-color: var(--mt-fg-subtle);
-		box-shadow: var(--mt-shadow-md);
+		transform: translateY(-3px);
+		border-color: var(--mt-bolt);
+		box-shadow:
+			var(--mt-shadow-md),
+			0 0 20px var(--mt-bolt-subtle);
 	}
 
 	.mt-pillar-icon {
@@ -819,10 +891,13 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 16px;
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
-		border-radius: 12px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 14px;
 		padding: 32px 24px;
+		box-shadow: var(--mt-shadow-sm);
 	}
 
 	.mt-step-item {
@@ -877,10 +952,13 @@
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
 		gap: 16px;
-		background: var(--mt-bg-subtle);
-		border: 1px solid var(--mt-border);
-		border-radius: 12px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 14px;
 		padding: 28px;
+		box-shadow: var(--mt-shadow-sm);
 	}
 
 	.mt-metric-box {

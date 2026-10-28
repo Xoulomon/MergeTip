@@ -10,13 +10,16 @@
 					<span class="mt-brand-name">MergeTip</span>
 				</div>
 				<p class="mt-footer-tagline">
-					Non-custodial, open-source tipping protocol for GitHub contributors powered by Nostr Wallet Connect (NIP-47), Lightning Address (LNURL) and Breez Spark SDK.
+					Non-custodial, open-source tipping protocol for GitHub contributors powered by Nostr
+					Wallet Connect (NIP-47), Lightning Address (LNURL) and Breez Spark SDK.
 				</p>
 				<div class="mt-protocols">
 					<span class="mt-protocol-pill" title="Nostr Wallet Connect standard">NIP-47 (NWC)</span>
 					<span class="mt-protocol-pill" title="Lightning Address / LNURL-pay">LNURL-pay</span>
 					<span class="mt-protocol-pill" title="Breez Spark SDK Web Wallet">Breez Spark</span>
-					<span class="mt-protocol-pill" title="Bitnob African Payouts (NG, GH, KE)">Bitnob Rails</span>
+					<span class="mt-protocol-pill" title="Bitnob African Payouts (NG, GH, KE)"
+						>Bitnob Rails</span
+					>
 				</div>
 			</div>
 
@@ -31,17 +34,30 @@
 
 				<div class="mt-footer-col">
 					<h4>Developers</h4>
-					<a href="https://github.com/xoulomon/mergetip" target="_blank" rel="noreferrer">GitHub Repository</a>
-					<a href="http://localhost:8080/healthz" target="_blank" rel="noreferrer">API Health (/healthz)</a>
-					<a href="http://localhost:8025" target="_blank" rel="noreferrer">Mailpit Local UI (:8025)</a>
+					<a href="https://github.com/xoulomon/mergetip" target="_blank" rel="noreferrer"
+						>GitHub Repository</a
+					>
+					<a href="http://localhost:8080/healthz" target="_blank" rel="noreferrer"
+						>API Health (/healthz)</a
+					>
+					<a href="http://localhost:8025" target="_blank" rel="noreferrer"
+						>Mailpit Local UI (:8025)</a
+					>
 					<a href="/settings#openapi">OpenAPI Contract</a>
 				</div>
 
 				<div class="mt-footer-col">
 					<h4>Protocols</h4>
-					<a href="https://github.com/nostr-protocol/nips/blob/master/47.md" target="_blank" rel="noreferrer">NIP-47 Specification</a>
-					<a href="https://github.com/lnurl/luds" target="_blank" rel="noreferrer">LNURL Specifications</a>
-					<a href="https://breez.technology/sdk/" target="_blank" rel="noreferrer">Breez SDK Docs</a>
+					<a
+						href="https://github.com/nostr-protocol/nips/blob/master/47.md"
+						target="_blank"
+						rel="noreferrer">NIP-47 Specification</a
+					>
+					<a href="https://github.com/lnurl/luds" target="_blank" rel="noreferrer"
+						>LNURL Specifications</a
+					>
+					<a href="https://breez.technology/sdk/" target="_blank" rel="noreferrer">Breez SDK Docs</a
+					>
 					<a href="https://bitnob.com/" target="_blank" rel="noreferrer">Bitnob Payouts</a>
 				</div>
 			</div>
@@ -49,7 +65,12 @@
 
 		<div class="mt-footer-bottom">
 			<div class="mt-footer-copy">
-				© {currentYear} MergeTip contributors. Released under the <a href="https://github.com/xoulomon/mergetip/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>.
+				© {currentYear} MergeTip contributors. Released under the
+				<a
+					href="https://github.com/xoulomon/mergetip/blob/main/LICENSE"
+					target="_blank"
+					rel="noreferrer">MIT License</a
+				>.
 			</div>
 			<div class="mt-footer-meta">
 				<span>Designed for open-source builders</span>
@@ -62,11 +83,15 @@
 
 <style>
 	.mt-footer {
-		background: var(--mt-bg-subtle);
-		border-top: 1px solid var(--mt-border);
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border-top: 1px solid var(--mt-glass-border);
 		margin-top: 64px;
 		color: var(--mt-fg-muted);
 		font-size: 13px;
+		position: relative;
+		z-index: 2;
 	}
 
 	.mt-footer-container {

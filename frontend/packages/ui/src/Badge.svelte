@@ -7,7 +7,17 @@
 		size = 'md',
 		children
 	}: {
-		variant?: 'paid' | 'pledged' | 'verifying' | 'held' | 'paying' | 'expired' | 'failed' | 'neutral' | 'bolt' | 'accent';
+		variant?:
+			| 'paid'
+			| 'pledged'
+			| 'verifying'
+			| 'held'
+			| 'paying'
+			| 'expired'
+			| 'failed'
+			| 'neutral'
+			| 'bolt'
+			| 'accent';
 		dot?: boolean;
 		size?: 'sm' | 'md';
 		children?: Snippet;

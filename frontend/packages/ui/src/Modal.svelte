@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import Button from './Button.svelte';
 
 	let {
 		open = false,
@@ -55,7 +54,9 @@
 				</div>
 				<button class="mt-modal-close" onclick={onclose} aria-label="Close modal">
 					<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-						<path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
+						<path
+							d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"
+						></path>
 					</svg>
 				</button>
 			</div>
@@ -77,28 +78,33 @@
 	.mt-modal-backdrop {
 		position: fixed;
 		inset: 0;
-		background: rgba(1, 4, 9, 0.65);
-		backdrop-filter: blur(4px);
+		background: rgba(1, 4, 9, 0.72);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 50;
 		padding: 16px;
-		animation: fadeIn 0.15s ease-out;
+		animation: fadeIn 0.2s cubic-bezier(0.23, 1, 0.32, 1);
 	}
 
 	.mt-modal-dialog {
-		background: var(--mt-surface-raised);
-		border: 1px solid var(--mt-border);
-		border-radius: 10px;
+		background: var(--mt-glass-bg, var(--mt-surface-raised));
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid var(--mt-glass-border, var(--mt-border));
+		border-radius: 14px;
 		width: 100%;
 		max-width: 520px;
-		box-shadow: var(--mt-shadow-lg);
+		box-shadow:
+			var(--mt-shadow-lg),
+			0 0 35px rgba(0, 0, 0, 0.35);
 		display: flex;
 		flex-direction: column;
 		max-height: 90vh;
 		overflow: hidden;
-		animation: scaleUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+		animation: scaleUp 0.22s cubic-bezier(0.23, 1, 0.32, 1);
 		outline: none;
 	}
 

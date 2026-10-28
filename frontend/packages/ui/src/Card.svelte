@@ -69,18 +69,25 @@
 
 <style>
 	.mt-card {
-		background: var(--mt-surface);
-		border: 1px solid var(--mt-border);
-		border-radius: 8px;
+		background: var(--mt-glass-bg);
+		backdrop-filter: var(--mt-glass-blur);
+		-webkit-backdrop-filter: var(--mt-glass-blur);
+		border: 1px solid var(--mt-glass-border);
+		border-radius: 12px;
 		box-shadow: var(--mt-shadow-sm);
 		overflow: hidden;
-		transition: all 0.2s ease-in-out;
+		transition:
+			transform var(--duration-normal) var(--ease-out),
+			border-color var(--duration-normal) var(--ease-out),
+			box-shadow var(--duration-normal) var(--ease-out);
 	}
 
 	.mt-card-hover:hover {
-		border-color: var(--mt-fg-subtle);
-		box-shadow: var(--mt-shadow-md);
-		transform: translateY(-1px);
+		border-color: var(--mt-bolt);
+		box-shadow:
+			var(--mt-shadow-md),
+			0 0 20px var(--mt-bolt-subtle);
+		transform: translateY(-2px);
 	}
 
 	.mt-card-header {

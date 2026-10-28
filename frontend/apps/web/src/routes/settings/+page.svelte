@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { Button, Badge, Card } from '@mergetip/ui';
+	import { auth } from '../../lib/auth.svelte';
 
 	// Settings state
-	let activeSection = $state<'profile' | 'nwc' | 'github' | 'recipient' | 'limits' | 'fiat'>('profile');
+	let activeSection = $state<'profile' | 'nwc' | 'github' | 'recipient' | 'limits' | 'fiat'>(
+		'profile'
+	);
 
 	// Profile State
 	let profileHandle = $state('xoulomon');
@@ -166,10 +169,73 @@
 				{#if activeSection === 'profile'}
 					<Card title="Public Contributor Profile">
 						{#snippet subtitle()}
-							Customize your public MergeTip sponsor profile, bio, Lightning address and Nostr identity.
+							Customize your public MergeTip sponsor profile, bio, Lightning address and Nostr
+							identity.
 						{/snippet}
 
 						<div class="mt-section-form">
+							<!-- Connected GitHub Identity Status -->
+							<div class="mt-account-banner">
+								<div class="mt-account-avatar-wrap">
+									<img
+										src={auth.session.avatarUrl ||
+											(auth.session.userHandle
+												? `https://github.com/${auth.session.userHandle}.png`
+												: 'https://avatars.githubusercontent.com/u/75281652?v=4')}
+										alt="@{auth.session.userHandle || 'guest'}"
+										class="mt-account-avatar"
+									/>
+									{#if auth.session.isAuthenticated}
+										<span class="mt-account-badge-dot" title="Connected"></span>
+									{/if}
+								</div>
+
+								<div class="mt-account-info">
+									<div class="mt-account-header">
+										<h4>
+											{auth.session.isAuthenticated
+												? `@${auth.session.userHandle}`
+												: 'No GitHub Account Connected'}
+										</h4>
+										{#if auth.session.isAuthenticated}
+											<Badge variant="paid" size="sm">Connected</Badge>
+										{:else}
+											<Badge variant="held" size="sm">Signed Out</Badge>
+										{/if}
+									</div>
+									<p class="mt-account-meta">
+										{#if auth.session.isAuthenticated}
+											{auth.session.userName || auth.session.userHandle} •
+											<a
+												href="https://github.com/{auth.session.userHandle}"
+												target="_blank"
+												rel="noreferrer"
+												class="mt-gh-link"
+											>
+												github.com/{auth.session.userHandle} ↗
+											</a>
+										{:else}
+											Connect your GitHub account to tip and claim sats for your contributions.
+										{/if}
+									</p>
+								</div>
+
+								<div class="mt-account-actions">
+									{#if auth.session.isAuthenticated}
+										<Button variant="default" size="sm" onclick={() => auth.openLoginModal()}>
+											Switch Account
+										</Button>
+										<Button variant="danger" size="sm" onclick={() => auth.logout()}>
+											Log Out
+										</Button>
+									{:else}
+										<Button variant="primary" size="sm" onclick={() => auth.openLoginModal()}>
+											Connect GitHub
+										</Button>
+									{/if}
+								</div>
+							</div>
+
 							<!-- Profile Card Preview -->
 							<div class="mt-profile-preview-box">
 								<div class="mt-preview-avatar-wrap">
@@ -192,9 +258,7 @@
 										<span>NPUB: {profileNpub.slice(0, 10)}…{profileNpub.slice(-6)}</span>
 									</div>
 								</div>
-								<a href="/profile" class="mt-preview-btn">
-									View Public Profile
-								</a>
+								<a href="/profile" class="mt-preview-btn"> View Public Profile </a>
 							</div>
 
 							<div class="mt-grid-2">
@@ -224,11 +288,7 @@
 
 							<div class="mt-field">
 								<label for="profileBio">Bio / Philosophy</label>
-								<textarea
-									id="profileBio"
-									rows="3"
-									bind:value={profileBio}
-									class="mt-form-input"
+								<textarea id="profileBio" rows="3" bind:value={profileBio} class="mt-form-input"
 								></textarea>
 								<span class="mt-field-help">Displayed on your public profile and bot replies.</span>
 							</div>
@@ -263,7 +323,8 @@
 									bind:value={profileNpub}
 									class="mt-form-input font-mono"
 								/>
-								<span class="mt-field-help">Used for cross-signing tip events and NIP-57 zaps.</span>
+								<span class="mt-field-help">Used for cross-signing tip events and NIP-57 zaps.</span
+								>
 							</div>
 						</div>
 					</Card>
@@ -273,7 +334,8 @@
 				{#if activeSection === 'nwc'}
 					<Card title="Nostr Wallet Connect (NIP-47)">
 						{#snippet subtitle()}
-							Connect any wallet supporting NWC (Alby Hub, Mutiny, Umbrel, raspiblitz). MergeTip never holds your funds.
+							Connect any wallet supporting NWC (Alby Hub, Mutiny, Umbrel, raspiblitz). MergeTip
+							never holds your funds.
 						{/snippet}
 
 						<div class="mt-section-form">
@@ -292,7 +354,8 @@
 									</Button>
 								</div>
 								<span class="mt-field-help">
-									Stored encrypted using envelope encryption (AES-256-GCM) with your server's master key.
+									Stored encrypted using envelope encryption (AES-256-GCM) with your server's master
+									key.
 								</span>
 							</div>
 
@@ -302,7 +365,9 @@
 										<strong>{nwcStatus.message}</strong>
 										{#if nwcStatus.balance}
 											<div class="mt-banner-bal">
-												Available Balance: <strong>{nwcStatus.balance.toLocaleString('en-US')} sats</strong>
+												Available Balance: <strong
+													>{nwcStatus.balance.toLocaleString('en-US')} sats</strong
+												>
 											</div>
 										{/if}
 									</div>
@@ -312,7 +377,10 @@
 							<div class="mt-info-box">
 								<h4>How NWC non-custodial security works:</h4>
 								<ul>
-									<li>MergeTip sends an encrypted NIP-47 request (<code>pay_invoice</code>) over Nostr relays.</li>
+									<li>
+										MergeTip sends an encrypted NIP-47 request (<code>pay_invoice</code>) over Nostr
+										relays.
+									</li>
 									<li>Your node or wallet validates the budget limits and executes the payment.</li>
 									<li>You can revoke this connection string anytime from your wallet.</li>
 								</ul>
@@ -323,6 +391,79 @@
 
 				<!-- GITHUB SECTION -->
 				{#if activeSection === 'github'}
+					<!-- Personal Connected GitHub Identity -->
+					<Card title="Connected GitHub Identity">
+						{#snippet subtitle()}
+							Link or manage your personal GitHub user account to authenticate tips, verify PR
+							reviews, and track pledges.
+						{/snippet}
+
+						<div class="mt-section-form">
+							{#if auth.session.isAuthenticated && auth.session.userHandle}
+								<div class="mt-account-banner">
+									<div class="mt-account-avatar-wrap">
+										<img
+											src={auth.session.avatarUrl ||
+												`https://github.com/${auth.session.userHandle}.png`}
+											alt="@{auth.session.userHandle}"
+											class="mt-account-avatar"
+										/>
+										<span class="mt-account-badge-dot" title="Active"></span>
+									</div>
+
+									<div class="mt-account-info">
+										<div class="mt-account-header">
+											<h4>@{auth.session.userHandle}</h4>
+											<Badge variant="paid" size="sm">Connected</Badge>
+										</div>
+										<p class="mt-account-meta">
+											{auth.session.userName || auth.session.userHandle} •
+											<a
+												href="https://github.com/{auth.session.userHandle}"
+												target="_blank"
+												rel="noreferrer"
+												class="mt-gh-link"
+											>
+												View GitHub Profile ↗
+											</a>
+										</p>
+									</div>
+
+									<div class="mt-account-actions">
+										<Button variant="default" size="sm" onclick={() => auth.openLoginModal()}>
+											Switch Account
+										</Button>
+										<Button variant="danger" size="sm" onclick={() => auth.logout()}>
+											Log Out
+										</Button>
+									</div>
+								</div>
+							{:else}
+								<div class="mt-unauth-card">
+									<div class="mt-unauth-content">
+										<div class="mt-unauth-icon-wrap">
+											<svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
+												<path
+													d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+												></path>
+											</svg>
+										</div>
+										<div>
+											<h4>No GitHub Account Connected</h4>
+											<p>
+												Connect your GitHub account to tip developers, claim pending pledges, and
+												manage bot permissions.
+											</p>
+										</div>
+									</div>
+									<Button variant="primary" size="md" onclick={() => auth.openLoginModal()}>
+										Connect GitHub Account
+									</Button>
+								</div>
+							{/if}
+						</div>
+					</Card>
+
 					<Card title="GitHub App Integration">
 						{#snippet subtitle()}
 							The MergeTip GitHub App monitors PR reviews and comments to parse <code>/tip</code> commands.
@@ -331,8 +472,16 @@
 						<div class="mt-section-form">
 							<div class="mt-integration-card">
 								<div class="mt-integration-left">
-									<svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor" class="mt-gh-svg">
-										<path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+									<svg
+										width="24"
+										height="24"
+										viewBox="0 0 16 16"
+										fill="currentColor"
+										class="mt-gh-svg"
+									>
+										<path
+											d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+										></path>
 									</svg>
 									<div>
 										<h4>MergeTip Bot (@{botName})</h4>
@@ -383,12 +532,17 @@
 										class="mt-form-input font-mono"
 										placeholder="you@domain.com"
 									/>
-									<Button variant="default" loading={verifyingLnurl} onclick={verifyLightningAddress}>
+									<Button
+										variant="default"
+										loading={verifyingLnurl}
+										onclick={verifyLightningAddress}
+									>
 										Verify LNURL
 									</Button>
 								</div>
 								<span class="mt-field-help">
-									Works with Alby, Wallet of Satoshi, Coinos, Fountain, Primal, or self-hosted bridge.
+									Works with Alby, Wallet of Satoshi, Coinos, Fountain, Primal, or self-hosted
+									bridge.
 								</span>
 							</div>
 
@@ -409,7 +563,8 @@
 									placeholder="you@email.com"
 								/>
 								<span class="mt-field-help">
-									Sent claim reminders if a sponsor tips you before you have set a Lightning address.
+									Sent claim reminders if a sponsor tips you before you have set a Lightning
+									address.
 								</span>
 							</div>
 						</div>
@@ -420,7 +575,8 @@
 				{#if activeSection === 'limits'}
 					<Card title="Safety Limits & Budget Caps">
 						{#snippet subtitle()}
-							Protect against accidental or rogue bot payouts by establishing firm automated boundaries.
+							Protect against accidental or rogue bot payouts by establishing firm automated
+							boundaries.
 						{/snippet}
 
 						<div class="mt-section-form">
@@ -437,7 +593,8 @@
 									<span class="mt-unit-tag">sats</span>
 								</div>
 								<span class="mt-field-help">
-									Any <code>/tip</code> exceeding this amount requires one-click confirmation on the web app before paying.
+									Any <code>/tip</code> exceeding this amount requires one-click confirmation on the web
+									app before paying.
 								</span>
 							</div>
 
@@ -482,7 +639,8 @@
 				{#if activeSection === 'fiat'}
 					<Card title="Local African Fiat Off-Ramp (Bitnob Payouts)">
 						{#snippet subtitle()}
-							Empower African developers to receive satoshi tips converted directly into local bank or mobile money deposits.
+							Empower African developers to receive satoshi tips converted directly into local bank
+							or mobile money deposits.
 						{/snippet}
 
 						<div class="mt-section-form">
@@ -748,6 +906,130 @@
 		display: flex;
 		flex-direction: column;
 		gap: 4px;
+	}
+
+	.mt-account-banner {
+		background: var(--mt-bg-subtle);
+		border: 1px solid var(--mt-border);
+		border-radius: 10px;
+		padding: 16px 18px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+
+	.mt-account-avatar-wrap {
+		position: relative;
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+	}
+
+	.mt-account-avatar {
+		width: 48px;
+		height: 48px;
+		border-radius: 9999px;
+		object-fit: cover;
+		border: 2px solid var(--mt-border);
+	}
+
+	.mt-account-badge-dot {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 12px;
+		height: 12px;
+		border-radius: 9999px;
+		background: var(--mt-success);
+		border: 2px solid var(--mt-surface);
+	}
+
+	.mt-account-info {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		flex: 1;
+		min-width: 180px;
+	}
+
+	.mt-account-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.mt-account-header h4 {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--mt-fg);
+		margin: 0;
+	}
+
+	.mt-account-meta {
+		font-size: 13px;
+		color: var(--mt-fg-muted);
+		margin: 0;
+	}
+
+	.mt-gh-link {
+		color: var(--mt-border-active);
+		text-decoration: none;
+	}
+
+	.mt-gh-link:hover {
+		text-decoration: underline;
+	}
+
+	.mt-account-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.mt-unauth-card {
+		background: var(--mt-bg-subtle);
+		border: 1px dashed var(--mt-border);
+		border-radius: 10px;
+		padding: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 16px;
+	}
+
+	.mt-unauth-content {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.mt-unauth-icon-wrap {
+		width: 44px;
+		height: 44px;
+		border-radius: 9999px;
+		background: var(--mt-surface);
+		border: 1px solid var(--mt-border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--mt-fg-muted);
+		flex-shrink: 0;
+	}
+
+	.mt-unauth-content h4 {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--mt-fg);
+		margin: 0;
+	}
+
+	.mt-unauth-content p {
+		font-size: 13px;
+		color: var(--mt-fg-muted);
+		margin: 2px 0 0 0;
 	}
 
 	.mt-integration-card,

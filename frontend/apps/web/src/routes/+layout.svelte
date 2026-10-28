@@ -1,14 +1,17 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
-	import { Navbar, Footer } from '@mergetip/ui';
+	import { Navbar, Footer, BackgroundMotion } from '@mergetip/ui';
 	import { onMount } from 'svelte';
+	import { auth } from '../lib/auth.svelte';
+	import GitHubLoginModal from '../lib/GitHubLoginModal.svelte';
 
 	let { children } = $props();
 
 	let currentTheme = $state<'dark' | 'light'>('dark');
 
 	onMount(() => {
+		auth.init();
 		const stored = localStorage.getItem('mergetip-theme');
 		if (stored === 'light' || stored === 'dark') {
 			currentTheme = stored;
@@ -31,36 +34,53 @@
 </svelte:head>
 
 <div class="mt-app-shell">
+	<BackgroundMotion intensity="medium" interactive={true} showGrid={true} />
+
 	<Navbar
 		currentPath={page.url.pathname}
 		theme={currentTheme}
 		ontoggletheme={toggleTheme}
 		relayConnected={true}
-		walletConnected={true}
-		walletBalanceSats={385000}
-		userHandle="xoulomon"
-		userName="Xoulomon"
-		lightningAddress="xoulomon@getalby.com"
-		nostrPubkey="npub1xoulomon89a74cf8290e219b48c"
+		walletConnected={auth.session.isAuthenticated}
+		walletBalanceSats={auth.session.walletBalanceSats}
+		isAuthenticated={auth.session.isAuthenticated}
+		userHandle={auth.session.userHandle ?? undefined}
+		userName={auth.session.userName ?? undefined}
+		avatarUrl={auth.session.avatarUrl ?? undefined}
+		lightningAddress={auth.session.lightningAddress}
+		nostrPubkey={auth.session.nostrPubkey}
+		onlogin={() => auth.openLoginModal()}
+		onlogout={() => auth.logout()}
 	/>
 
-	<div class="mt-app-content">
+	<main class="mt-app-content">
 		{@render children()}
-	</div>
+	</main>
 
 	<Footer />
+
+	<!-- Connect GitHub Account Modal -->
+	<GitHubLoginModal
+		open={auth.isLoginModalOpen}
+		onclose={() => auth.closeLoginModal()}
+		onlogin={(handle: string, name?: string, avatar?: string) => auth.login(handle, name, avatar)}
+	/>
 </div>
 
 <style>
 	.mt-app-shell {
+		position: relative;
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
 		background: var(--mt-bg);
 		color: var(--mt-fg);
+		overflow-x: hidden;
 	}
 
 	.mt-app-content {
+		position: relative;
+		z-index: 1;
 		flex: 1;
 	}
 </style>

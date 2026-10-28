@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Badge, formatSats, formatFiatUSD } from '@mergetip/ui';
+	import { Button, formatFiatUSD } from '@mergetip/ui';
 
 	// Quick amounts from FR-8.2
 	const amounts = [21, 210, 2100, 5000];
@@ -80,12 +80,7 @@
 				<span>Hold until PR merges (on-merge)</span>
 			</label>
 
-			<Button
-				variant="bolt"
-				size="md"
-				loading={tipping}
-				onclick={sendExtensionTip}
-			>
+			<Button variant="bolt" size="md" loading={tipping} onclick={sendExtensionTip}>
 				Tip {selectedAmount.toLocaleString('en-US')} Sats
 			</Button>
 		</div>
@@ -106,7 +101,8 @@
 	:global(body) {
 		margin: 0;
 		padding: 0;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+		font-family:
+			-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
 		background: #0d1117;
 		color: #f0f6fc;
 	}

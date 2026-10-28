@@ -15,7 +15,10 @@ export default ts.config(
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts'],
-		languageOptions: { parserOptions: { parser: ts.parser } }
+		languageOptions: { parserOptions: { parser: ts.parser } },
+		rules: {
+			'svelte/no-navigation-without-resolve': 'off'
+		}
 	},
 	{
 		ignores: [
