@@ -2,7 +2,17 @@
 	import { Button, Badge, Card } from '@mergetip/ui';
 
 	// Settings state
-	let activeSection = $state<'nwc' | 'github' | 'recipient' | 'limits' | 'fiat'>('nwc');
+	let activeSection = $state<'profile' | 'nwc' | 'github' | 'recipient' | 'limits' | 'fiat'>('profile');
+
+	// Profile State
+	let profileHandle = $state('xoulomon');
+	let profileName = $state('Xoulomon');
+	let profileBio = $state(
+		'Open-source maintainer and Lightning protocol advocate. Building MergeTip to give developers non-custodial, automated Bitcoin micro-rewards for every merged pull request.'
+	);
+	let profileLocation = $state('Decentralized / Remote');
+	let profileWebsite = $state('https://mergetip.dev');
+	let profileNpub = $state('npub1xoulomon89a74cf8290e219b48c772e01');
 
 	// NWC State
 	let nwcUri = $state(
@@ -90,6 +100,17 @@
 			<!-- Nav Tabs -->
 			<nav class="mt-settings-nav" aria-label="Settings categories">
 				<button
+					class="mt-settings-tab {activeSection === 'profile' ? 'tab-selected' : ''}"
+					onclick={() => (activeSection = 'profile')}
+				>
+					<span class="mt-tab-icon">👤</span>
+					<div class="mt-tab-text">
+						<span class="mt-tab-title">Profile & Identity</span>
+						<span class="mt-tab-desc">@{profileHandle} public info & bio</span>
+					</div>
+				</button>
+
+				<button
 					class="mt-settings-tab {activeSection === 'nwc' ? 'tab-selected' : ''}"
 					onclick={() => (activeSection = 'nwc')}
 				>
@@ -147,6 +168,114 @@
 
 			<!-- Settings Content Area -->
 			<div class="mt-settings-content">
+				<!-- PROFILE SECTION -->
+				{#if activeSection === 'profile'}
+					<Card title="Public Contributor Profile">
+						{#snippet subtitle()}
+							Customize your public MergeTip sponsor profile, bio, Lightning address and Nostr identity.
+						{/snippet}
+
+						<div class="mt-section-form">
+							<!-- Profile Card Preview -->
+							<div class="mt-profile-preview-box">
+								<div class="mt-preview-avatar-wrap">
+									<img
+										src="https://avatars.githubusercontent.com/u/75281652?v=4"
+										alt="@{profileHandle}"
+										class="mt-preview-avatar"
+									/>
+									<span class="mt-preview-bolt">⚡</span>
+								</div>
+								<div class="mt-preview-info">
+									<div class="mt-preview-title-row">
+										<span class="mt-preview-name">{profileName}</span>
+										<span class="mt-preview-handle">@{profileHandle}</span>
+										<Badge variant="bolt" size="sm">Core Sponsor</Badge>
+									</div>
+									<p class="mt-preview-bio">{profileBio}</p>
+									<div class="mt-preview-links">
+										<span>⚡ {lightningAddress}</span>
+										<span>•</span>
+										<span>🟣 {profileNpub.slice(0, 10)}…{profileNpub.slice(-6)}</span>
+									</div>
+								</div>
+								<a href="/profile" class="mt-preview-btn">
+									View Public Profile ↗
+								</a>
+							</div>
+
+							<div class="mt-grid-2">
+								<div class="mt-field">
+									<label for="profileName">Display Name</label>
+									<input
+										id="profileName"
+										type="text"
+										bind:value={profileName}
+										class="mt-form-input"
+									/>
+								</div>
+
+								<div class="mt-field">
+									<label for="profileHandle">GitHub Handle</label>
+									<div class="mt-input-group">
+										<span class="mt-input-prefix">@</span>
+										<input
+											id="profileHandle"
+											type="text"
+											bind:value={profileHandle}
+											class="mt-form-input"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-field">
+								<label for="profileBio">Bio / Philosophy</label>
+								<textarea
+									id="profileBio"
+									rows="3"
+									bind:value={profileBio}
+									class="mt-form-input"
+								></textarea>
+								<span class="mt-field-help">Displayed on your public profile and bot replies.</span>
+							</div>
+
+							<div class="mt-grid-2">
+								<div class="mt-field">
+									<label for="profileLocation">Location</label>
+									<input
+										id="profileLocation"
+										type="text"
+										bind:value={profileLocation}
+										class="mt-form-input"
+									/>
+								</div>
+
+								<div class="mt-field">
+									<label for="profileWebsite">Website</label>
+									<input
+										id="profileWebsite"
+										type="text"
+										bind:value={profileWebsite}
+										class="mt-form-input"
+									/>
+								</div>
+							</div>
+
+							<div class="mt-field">
+								<label for="profileNpub">Nostr Public Key (npub / hex)</label>
+								<input
+									id="profileNpub"
+									type="text"
+									bind:value={profileNpub}
+									class="mt-form-input font-mono"
+								/>
+								<span class="mt-field-help">Used for cross-signing tip events and NIP-57 zaps.</span>
+							</div>
+						</div>
+					</Card>
+				{/if}
+
 				<!-- NWC SECTION -->
 				{#if activeSection === 'nwc'}
 					<Card title="Nostr Wallet Connect (NIP-47)">
@@ -701,6 +830,112 @@
 		width: 18px;
 		height: 18px;
 		cursor: pointer;
+	}
+
+	/* Profile Preview Box in Settings */
+	.mt-profile-preview-box {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 16px;
+		background: var(--mt-surface-subtle);
+		border: 1px solid var(--mt-border-glow);
+		border-radius: 10px;
+		flex-wrap: wrap;
+	}
+
+	.mt-preview-avatar-wrap {
+		position: relative;
+		width: 52px;
+		height: 52px;
+		flex-shrink: 0;
+	}
+
+	.mt-preview-avatar {
+		width: 52px;
+		height: 52px;
+		border-radius: 9999px;
+		border: 2px solid var(--mt-bolt);
+		box-shadow: 0 0 10px var(--mt-bolt-glow);
+		object-fit: cover;
+	}
+
+	.mt-preview-bolt {
+		position: absolute;
+		bottom: -2px;
+		right: -2px;
+		width: 18px;
+		height: 18px;
+		background: var(--mt-surface);
+		border: 1.5px solid var(--mt-bolt);
+		border-radius: 9999px;
+		font-size: 11px;
+		color: var(--mt-bolt);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.mt-preview-info {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		flex: 1;
+		min-width: 240px;
+	}
+
+	.mt-preview-title-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+
+	.mt-preview-name {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--mt-fg);
+	}
+
+	.mt-preview-handle {
+		font-size: 13px;
+		color: var(--mt-fg-muted);
+		font-weight: 500;
+	}
+
+	.mt-preview-bio {
+		font-size: 13px;
+		color: var(--mt-fg-muted);
+		line-height: 1.4;
+		margin: 0;
+	}
+
+	.mt-preview-links {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 11px;
+		font-family: var(--mt-font-mono);
+		color: var(--mt-fg-subtle);
+		margin-top: 2px;
+	}
+
+	.mt-preview-btn {
+		padding: 6px 12px;
+		border-radius: 6px;
+		background: var(--mt-surface);
+		border: 1px solid var(--mt-border);
+		color: var(--mt-link);
+		font-size: 12px;
+		font-weight: 600;
+		text-decoration: none;
+		transition: all 0.15s ease;
+		white-space: nowrap;
+	}
+
+	.mt-preview-btn:hover {
+		background: var(--mt-surface-hover);
+		border-color: var(--mt-link);
 	}
 
 	@media (max-width: 860px) {

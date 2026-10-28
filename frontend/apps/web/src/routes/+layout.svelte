@@ -39,6 +39,9 @@
 		walletConnected={true}
 		walletBalanceSats={385000}
 		userHandle="xoulomon"
+		userName="Xoulomon"
+		lightningAddress="xoulomon@getalby.com"
+		nostrPubkey="npub1xoulomon89a74cf8290e219b48c"
 	/>
 
 	<div class="mt-app-content">
