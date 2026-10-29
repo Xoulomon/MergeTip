@@ -5,3 +5,8 @@ packages:
 # Breez SDK pulls better-sqlite3 for Node storage; the web app only uses the WASM build.
 allowBuilds:
   better-sqlite3: false
+
+# WXT imports its modules (e.g. @wxt-dev/module-svelte) from its own package folder, which only
+# works if they are hoisted where it can resolve them.
+publicHoistPattern:
+  - '@wxt-dev/module-*'

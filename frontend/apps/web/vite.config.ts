@@ -1,4 +1,5 @@
-import adapter from '@sveltejs/adapter-node';
+import nodeAdapter from '@sveltejs/adapter-node';
+import vercelAdapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { loadEnv } from 'vite';
@@ -38,7 +39,8 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			tailwindcss(),
 			sveltekit({
-				adapter: adapter(),
+				// Vercel sets VERCEL during its builds; everywhere else (Docker, Fly) runs on Node.
+				adapter: process.env.VERCEL ? vercelAdapter({ runtime: 'nodejs22.x' }) : nodeAdapter(),
 				env: { dir: ENV_DIR },
 				csp: {
 					mode: 'auto',
