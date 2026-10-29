@@ -10,6 +10,11 @@ const url = (fallback: string) => (value: string | undefined) => {
 };
 
 export const variables = defineEnvVars({
+	API_ORIGIN: {
+		description:
+			'Server only. When set, /v1/* and /healthz are relayed to this API origin, so a web app hosted apart from the API (e.g. Vercel + Render) shares one origin with it.',
+		schema: (value) => (value ? url('http://localhost:8080')(value) : undefined)
+	},
 	PUBLIC_API_URL: {
 		public: true,
 		description: 'Origin of the MergeTip API (backend/crates/api), without /v1.',
