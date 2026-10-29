@@ -1,0 +1,9 @@
+# Only images built from the repository root read this: deploy/render/Dockerfile. Send just the
+# backend sources and its start script (never build output, dependencies or secrets).
+*
+!backend
+!deploy/render/start.sh
+backend/target
+backend/.env
+**/.env
+**/.secrets
