@@ -26,6 +26,24 @@ test('landing pitches the product and previews the bot', async ({ page }) => {
 	await expectAccessible(page);
 });
 
+test('the extension page explains installing and links the release downloads', async ({ page }) => {
+	await mockApi(page, signedOut);
+	await page.goto('/');
+	await page.getByRole('link', { name: 'get the browser extension' }).click();
+
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Browser extension');
+	await expect(page.getByRole('link', { name: 'Download for Chrome' })).toHaveAttribute(
+		'href',
+		/\/releases\/download\/extension-v[\d.]+\/mergetip-extension-[\d.]+-chrome\.zip$/
+	);
+	await expect(page.getByRole('link', { name: 'Download for Firefox' })).toHaveAttribute(
+		'href',
+		/\/releases\/download\/extension-v[\d.]+\/mergetip-extension-[\d.]+-firefox\.zip$/
+	);
+
+	await expectAccessible(page);
+});
+
 test('signed-out visitors to a protected page are sent to GitHub sign-in, then back', async ({
 	page
 }) => {

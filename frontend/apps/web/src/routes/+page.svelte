@@ -57,6 +57,11 @@
 			</li>
 		{/each}
 	</ol>
+	<p class="mt-4 text-center text-sm text-fg-muted">
+		Tip in one click from GitHub:
+		<a class="text-info underline" href="/extension">get the browser extension</a>
+		for Chrome, Brave, Edge and Firefox.
+	</p>
 </section>
 
 <section aria-labelledby="demo" class="grid gap-6 py-8 md:grid-cols-2 md:items-start">

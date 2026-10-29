@@ -11,6 +11,7 @@
 			from your wallet to the contributor's.
 		</p>
 		<nav aria-label="Footer" class="flex gap-4">
+			<a class="hover:text-fg hover:underline" href="/extension">Browser extension</a>
 			<a class="hover:text-fg hover:underline" href={REPO_URL}>Source (MIT)</a>
 			<a class="hover:text-fg hover:underline" href="{REPO_URL}/blob/main/SECURITY.md">Security</a>
 		</nav>

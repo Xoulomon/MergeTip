@@ -11,10 +11,29 @@ Connect (NWC), and receivers get paid to their own Lightning address.
 
 ## Use it
 
+Open **https://mergetip.vercel.app** and sign in with GitHub.
+
 - **Receive tips:** sign in with GitHub and save a Lightning address from a wallet such as Cake
   Wallet or Coinos (or create one in the browser). Until then, tips wait for you as pledges.
 - **Send tips:** connect a Nostr Wallet Connect wallet such as Coinos, Primal or Alby Hub, set
   your limits, install the GitHub App on your repositories, and comment `/tip`.
+
+### Browser extension
+
+Adds **⚡ Tip** buttons on GitHub pull requests and issues and posts the `/tip` comment for you.
+Download it from the
+[latest extension release](https://github.com/Xoulomon/MergeTip/releases/tag/extension-v0.1.0)
+(also linked at https://mergetip.vercel.app/extension):
+
+- **Chrome, Brave, Edge:** download `mergetip-extension-0.1.0-chrome.zip` and unzip it, open
+  `chrome://extensions` (or `brave://extensions`, `edge://extensions`), turn on **Developer
+  mode**, click **Load unpacked** and choose the unzipped folder.
+- **Firefox:** download `mergetip-extension-0.1.0-firefox.zip`, open
+  `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on…** and choose the zip
+  (Firefox removes it on restart).
+
+Then click any **⚡ Tip** button on GitHub → **Connect MergeTip**, and approve on the page that
+opens.
 
 The [user guide](docs/user-guide.md) covers wallets, the command, the browser extension, bot
 replies and troubleshooting.

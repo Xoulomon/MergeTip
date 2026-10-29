@@ -136,9 +136,12 @@ author) and next to each commenter and reviewer. Clicking one opens a small tip 
 instantly" or "Will be pledged") and your budget for today. **Send ⚡** posts the `/tip` comment
 for you.
 
-Install it from the Chrome Web Store or Firefox Add-ons when published. Until then, load a build:
-Chrome, Brave and other Chromium browsers via `chrome://extensions` → **Developer mode** →
-**Load unpacked**; Firefox via `about:debugging` → **This Firefox** → **Load Temporary Add-on**.
+Download it from the
+[extension release](https://github.com/Xoulomon/MergeTip/releases/tag/extension-v0.1.0) (step by
+step: https://mergetip.vercel.app/extension). It isn't in the Chrome Web Store or Firefox Add-ons
+yet, so load it by hand: Chrome, Brave and other Chromium browsers via `chrome://extensions` →
+**Developer mode** → **Load unpacked** (choose the unzipped folder); Firefox via `about:debugging`
+→ **This Firefox** → **Load Temporary Add-on** (choose the zip; Firefox removes it on restart).
 Then click any ⚡ button → **Connect MergeTip**, and approve on the page that opens.
 
 The extension can post tips and read your limits. It never sees your wallet connection and can't
