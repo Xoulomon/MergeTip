@@ -32,9 +32,44 @@ pub struct WorkerConfig {
 #[derive(Debug, Clone)]
 pub struct GithubAppConfig {
     pub app_id: u64,
-    pub private_key_path: PathBuf,
+    pub private_key: GithubAppKey,
     /// Overrides `https://api.github.com` (GitHub Enterprise or a local mock).
     pub api_url: Option<String>,
+}
+
+/// Where the GitHub App's private key comes from: a file locally, or the PEM itself on hosts that
+/// only inject environment variables (Railway, Render, …). Exactly one must be set.
+#[derive(Debug, Clone)]
+pub enum GithubAppKey {
+    /// `GITHUB_APP_PRIVATE_KEY_PATH`.
+    Path(PathBuf),
+    /// `GITHUB_APP_PRIVATE_KEY`. Escaped `\n` sequences are accepted for one-line values.
+    Pem(Redacted<String>),
+}
+
+impl GithubAppKey {
+    fn from_env(env: &impl Env) -> Result<Self, ConfigError> {
+        match (
+            env.optional("GITHUB_APP_PRIVATE_KEY"),
+            env.optional("GITHUB_APP_PRIVATE_KEY_PATH"),
+        ) {
+            (Some(_), Some(_)) => Err(ConfigError::Invalid {
+                name: "GITHUB_APP_PRIVATE_KEY",
+                reason: "set it or GITHUB_APP_PRIVATE_KEY_PATH, not both".into(),
+            }),
+            (Some(pem), None) => Ok(Self::Pem(Redacted::new(pem.replace("\\n", "\n")))),
+            (None, Some(path)) => Ok(Self::Path(path.into())),
+            (None, None) => Err(ConfigError::Missing("GITHUB_APP_PRIVATE_KEY_PATH")),
+        }
+    }
+
+    /// The PEM bytes, reading the file if the key is given by path.
+    pub fn load(&self) -> std::io::Result<Vec<u8>> {
+        match self {
+            Self::Path(path) => std::fs::read(path),
+            Self::Pem(pem) => Ok(pem.expose().as_bytes().to_vec()),
+        }
+    }
 }
 
 impl WorkerConfig {
@@ -82,7 +117,7 @@ impl WorkerConfig {
                         reason: err.to_string(),
                     },
                 )?,
-                private_key_path: env.required("GITHUB_APP_PRIVATE_KEY_PATH")?.into(),
+                private_key: GithubAppKey::from_env(env)?,
                 api_url: env.optional("GITHUB_API_URL"),
             },
             web_base_url: env
@@ -165,6 +200,42 @@ mod tests {
                 ..
             })
         ));
+    }
+
+    #[test]
+    fn the_github_app_key_can_be_given_inline() {
+        let mut env = base();
+        env.remove("GITHUB_APP_PRIVATE_KEY_PATH");
+        env.insert(
+            "GITHUB_APP_PRIVATE_KEY",
+            "-----BEGIN KEY-----\\nabc\\n-----END KEY-----",
+        );
+        let config = WorkerConfig::from_env(&env).unwrap();
+        assert_eq!(
+            config.github.private_key.load().unwrap(),
+            b"-----BEGIN KEY-----\nabc\n-----END KEY-----"
+        );
+        // The key is a secret: never in debug output.
+        assert!(!format!("{config:?}").contains("abc"));
+    }
+
+    #[test]
+    fn the_github_app_key_comes_from_exactly_one_place() {
+        let mut env = base();
+        env.insert("GITHUB_APP_PRIVATE_KEY", "pem");
+        assert!(matches!(
+            WorkerConfig::from_env(&env),
+            Err(ConfigError::Invalid {
+                name: "GITHUB_APP_PRIVATE_KEY",
+                ..
+            })
+        ));
+        env.remove("GITHUB_APP_PRIVATE_KEY");
+        env.remove("GITHUB_APP_PRIVATE_KEY_PATH");
+        assert_eq!(
+            WorkerConfig::from_env(&env).map(|_| ()),
+            Err(ConfigError::Missing("GITHUB_APP_PRIVATE_KEY_PATH"))
+        );
     }
 
     #[test]

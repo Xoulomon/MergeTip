@@ -1,4 +1,5 @@
-import adapter from '@sveltejs/adapter-node';
+import nodeAdapter from '@sveltejs/adapter-node';
+import vercelAdapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { loadEnv } from 'vite';
@@ -38,8 +39,13 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			tailwindcss(),
 			sveltekit({
-				adapter: adapter(),
+				// Vercel sets VERCEL during its builds; everywhere else (Docker, Fly) runs on Node.
+				adapter: process.env.VERCEL ? vercelAdapter({ runtime: 'nodejs22.x' }) : nodeAdapter(),
 				env: { dir: ENV_DIR },
+				// The app has no form actions (what this check protects), and the API checks the origin
+				// of cookie-authenticated writes itself. Relayed one-click unsubscribes (RFC 8058) are
+				// cross-site form POSTs from mail providers and must get through.
+				csrf: { trustedOrigins: ['*'] },
 				csp: {
 					mode: 'auto',
 					directives: {

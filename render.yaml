@@ -1,0 +1,49 @@
+# Render Blueprint: the MergeTip API and payment worker as one free web service
+# (deploy/render/Dockerfile). Postgres is external (e.g. Neon); the web app runs on Vercel and
+# forwards /v1/* here. Setup: docs/deploying.md.
+services:
+  - type: web
+    name: mergetip-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: dev
+    dockerContext: .
+    dockerfilePath: ./deploy/render/Dockerfile
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: staging
+      - key: LIGHTNING_NETWORK
+        value: bitcoin
+      # Behind Vercel's rewrites, this is the caller's real IP (Vercel overwrites it).
+      - key: TRUSTED_CLIENT_IP_HEADER
+        value: x-vercel-forwarded-for
+      - key: RUST_LOG
+        value: info
+      # The web app's Vercel URL, e.g. https://mergetip.vercel.app (both: sign-in returns there).
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: API_PUBLIC_URL
+        sync: false
+      # Secrets: Render asks for these when the Blueprint is created.
+      - key: DATABASE_URL
+        sync: false
+      - key: MASTER_KEY
+        sync: false
+      - key: GITHUB_APP_ID
+        sync: false
+      - key: GITHUB_APP_PRIVATE_KEY
+        sync: false
+      - key: GITHUB_WEBHOOK_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      # Optional: email for pledge notices and confirmation codes.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false

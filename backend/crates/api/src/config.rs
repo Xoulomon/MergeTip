@@ -1,6 +1,6 @@
 use std::{net::SocketAddr, sync::Arc};
 
-use axum::http::HeaderValue;
+use axum::http::{HeaderName, HeaderValue};
 use mergetip_crypto::{Keyring, Redacted};
 use mergetip_runtime::{AppEnv, ConfigError, config::Env};
 
@@ -26,6 +26,9 @@ pub struct ApiConfig {
     pub github_api_url: String,
     /// Browser-extension origins allowed to make cookie-authenticated writes, besides the web app.
     pub extension_origins: Vec<HeaderValue>,
+    /// The header the hosting proxy sets to the caller's IP (`TRUSTED_CLIENT_IP_HEADER`), for
+    /// per-IP rate limits. Only name a header the proxy overwrites, never one a client can set.
+    pub client_ip_header: HeaderName,
     /// The Lightning network invoices must be for (`bitcoin` in production).
     pub lightning_network: mergetip_payer::Network,
     /// How confirmation codes are emailed.
@@ -96,6 +99,16 @@ impl ApiConfig {
                     })
                 })
                 .collect::<Result<_, _>>()?,
+            client_ip_header: env
+                .optional("TRUSTED_CLIENT_IP_HEADER")
+                .as_deref()
+                .unwrap_or(crate::hardening::DEFAULT_CLIENT_IP_HEADER)
+                .trim()
+                .parse()
+                .map_err(|_| ConfigError::Invalid {
+                    name: "TRUSTED_CLIENT_IP_HEADER",
+                    reason: "not a valid header name".into(),
+                })?,
             lightning_network: env
                 .parse_or("LIGHTNING_NETWORK", mergetip_payer::Network::Bitcoin)?,
         })

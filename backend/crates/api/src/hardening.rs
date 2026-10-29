@@ -9,7 +9,7 @@ use std::{net::SocketAddr, num::NonZeroU32, time::Duration};
 
 use axum::{
     extract::{ConnectInfo, Request, State},
-    http::{HeaderValue, StatusCode, header},
+    http::{HeaderName, HeaderValue, StatusCode, header},
     middleware::Next,
     response::{IntoResponse, Response},
 };
@@ -45,15 +45,27 @@ pub struct RateLimits {
     claims: Rule,
     otp: Rule,
     comment: Rule,
+    /// Where the hosting proxy puts the caller's IP.
+    client_ip_header: HeaderName,
 }
+
+/// Fly's proxy header (`Fly-Client-IP`), which it overwrites on every request.
+pub const DEFAULT_CLIENT_IP_HEADER: &str = "fly-client-ip";
 
 impl Default for RateLimits {
     fn default() -> Self {
+        Self::new(HeaderName::from_static(DEFAULT_CLIENT_IP_HEADER))
+    }
+}
+
+impl RateLimits {
+    pub fn new(client_ip_header: HeaderName) -> Self {
         Self {
             auth: Rule::new(30, 30),
             claims: Rule::new(20, 10),
             otp: Rule::new(5, 5),
             comment: Rule::new(60, 30),
+            client_ip_header,
         }
     }
 }
@@ -74,13 +86,17 @@ impl RateLimits {
     }
 }
 
-/// The client's address: Fly's `Fly-Client-IP` (set by its proxy, which overwrites any value the
-/// client sent), else the TCP peer.
-fn client_ip(request: &Request) -> String {
+/// The client's address: the trusted proxy header (e.g. Fly's `Fly-Client-IP`, Vercel's
+/// `X-Vercel-Forwarded-For`; the proxy overwrites any value the client sent), else the TCP peer.
+/// A comma-separated list counts by its first entry, the original client.
+fn client_ip(request: &Request, trusted_header: &HeaderName) -> String {
     request
         .headers()
-        .get("fly-client-ip")
+        .get(trusted_header)
         .and_then(|v| v.to_str().ok())
+        .and_then(|v| v.split(',').next())
+        .map(str::trim)
+        .filter(|ip| !ip.is_empty())
         .map(str::to_owned)
         .or_else(|| {
             request
@@ -123,7 +139,10 @@ pub async fn rate_limit(State(state): State<AppState>, request: Request, next: N
     };
     let clock = DefaultClock::default();
     let keys = [
-        Some((&rule.per_ip, format!("{group}:{}", client_ip(&request)))),
+        Some((
+            &rule.per_ip,
+            format!("{group}:{}", client_ip(&request, &limits.client_ip_header)),
+        )),
         user_key(&request).map(|user| (&rule.per_user, format!("{group}:{user}"))),
     ];
     for (limiter, key) in keys.into_iter().flatten() {
@@ -162,4 +181,55 @@ pub async fn security_headers(request: Request, next: Next) -> Response {
         headers.insert(header::CACHE_CONTROL, HeaderValue::from_static("no-store"));
     }
     response
+}
+
+#[cfg(test)]
+mod tests {
+    use axum::body::Body;
+
+    use super::*;
+
+    fn request(headers: &[(&str, &str)]) -> Request {
+        let mut builder = Request::builder().uri("/v1/claims/x");
+        for (name, value) in headers {
+            builder = builder.header(*name, *value);
+        }
+        let mut request = builder.body(Body::empty()).unwrap();
+        request
+            .extensions_mut()
+            .insert(ConnectInfo(SocketAddr::from(([10, 0, 0, 1], 443))));
+        request
+    }
+
+    #[test]
+    fn the_trusted_header_wins_over_the_peer() {
+        let vercel = HeaderName::from_static("x-vercel-forwarded-for");
+        assert_eq!(
+            client_ip(
+                &request(&[("x-vercel-forwarded-for", "203.0.113.7")]),
+                &vercel
+            ),
+            "203.0.113.7"
+        );
+        // A list counts by its first entry: the original client.
+        assert_eq!(
+            client_ip(
+                &request(&[("x-vercel-forwarded-for", " 203.0.113.7, 10.0.0.2")]),
+                &vercel
+            ),
+            "203.0.113.7"
+        );
+    }
+
+    #[test]
+    fn other_headers_are_ignored_and_the_peer_is_the_fallback() {
+        let fly = HeaderName::from_static(DEFAULT_CLIENT_IP_HEADER);
+        // A client can send any header; only the configured one is trusted.
+        let spoofed = request(&[("x-forwarded-for", "198.51.100.1")]);
+        assert_eq!(client_ip(&spoofed, &fly), "10.0.0.1");
+        assert_eq!(
+            client_ip(&request(&[("fly-client-ip", "")]), &fly),
+            "10.0.0.1"
+        );
+    }
 }

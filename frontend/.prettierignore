@@ -5,3 +5,7 @@ build
 dist
 pnpm-lock.yaml
 **/schema.d.ts
+
+# Playwright output (git-ignored, written by local runs)
+test-results/
+playwright-report/

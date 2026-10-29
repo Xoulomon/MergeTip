@@ -39,12 +39,13 @@ impl AppState {
         clock: Arc<dyn Clock>,
         services: Services,
     ) -> Self {
+        let rate_limits = crate::hardening::RateLimits::new(config.client_ip_header.clone());
         Self(Arc::new(Inner {
             pool,
             config,
             clock,
             services,
-            rate_limits: crate::hardening::RateLimits::default(),
+            rate_limits,
         }))
     }
 
