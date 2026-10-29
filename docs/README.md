@@ -4,6 +4,7 @@
 
 - [`user-guide.md`](user-guide.md) — using MergeTip: wallets, receiving, sending, `/tip`, the extension.
 - [`running-locally.md`](running-locally.md) — running the whole product, wallets, multi-device testing.
+- [`deploying.md`](deploying.md) — a public deployment on Render, Neon and Vercel.
 
 ## How it is built
 

@@ -82,7 +82,8 @@ make dev            # api :8080, worker, web :5173
 ```
 
 The full guide (GitHub App setup, wallets, the extension, testing from other devices,
-troubleshooting) is [`docs/running-locally.md`](docs/running-locally.md). Other tasks: `make help`. Backend details: [`docs/backend/README.md`](docs/backend/README.md); frontend details: [`docs/frontend/README.md`](docs/frontend/README.md).
+troubleshooting) is [`docs/running-locally.md`](docs/running-locally.md); deploying it (Render, Neon,
+Vercel) is [`docs/deploying.md`](docs/deploying.md). Other tasks: `make help`. Backend details: [`docs/backend/README.md`](docs/backend/README.md); frontend details: [`docs/frontend/README.md`](docs/frontend/README.md).
 
 Working on one side only:
 
