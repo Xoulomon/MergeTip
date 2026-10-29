@@ -45,9 +45,11 @@ async fn main() -> anyhow::Result<()> {
     }
     db::migrate(&pool).await.context("migrations failed")?;
 
-    let key_path = &config.github.private_key_path;
-    let private_key = std::fs::read(key_path)
-        .with_context(|| format!("cannot read the GitHub App key at {}", key_path.display()))?;
+    let private_key = config
+        .github
+        .private_key
+        .load()
+        .context("cannot read the GitHub App key")?;
     let github = OctocrabGitHub::from_app_key(
         config.github.app_id,
         &private_key,
