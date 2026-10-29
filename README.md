@@ -9,6 +9,16 @@ Connect (NWC), and receivers get paid to their own Lightning address.
 /tip @newdev 5k on-merge
 ```
 
+## Use it
+
+- **Receive tips:** sign in with GitHub and save a Lightning address from a wallet such as Cake
+  Wallet or Coinos (or create one in the browser). Until then, tips wait for you as pledges.
+- **Send tips:** connect a Nostr Wallet Connect wallet such as Coinos, Primal or Alby Hub, set
+  your limits, install the GitHub App on your repositories, and comment `/tip`.
+
+The [user guide](docs/user-guide.md) covers wallets, the command, the browser extension, bot
+replies and troubleshooting.
+
 ## Repository layout
 
 ```
@@ -39,7 +49,8 @@ Connect (NWC), and receivers get paid to their own Lightning address.
 │       └── api-client/      # TypeScript client generated from openapi/openapi.json
 ├── openapi/                 # API contract shared by backend (producer) and frontend (consumer)
 ├── deploy/                  # Fly.io configs, GitHub App manifests per environment
-├── docs/                    # ADRs, RFCs, runbooks
+├── docs/                    # user guide, run guide, ADRs, RFCs, runbooks
+├── tools/                   # wallet connection probe, tunnel proxy for multi-device testing
 ├── docker-compose.yml       # Postgres, Nostr relay, Mailpit, mock wallet + LNURL server
 ├── Makefile                 # cross-project tasks (`make help`)
 └── .github/                 # CI, PR and issue templates
@@ -70,7 +81,8 @@ make migrate        # apply migrations
 make dev            # api :8080, worker, web :5173
 ```
 
-Other tasks: `make help`. Backend details: [`docs/backend/README.md`](docs/backend/README.md).
+The full guide (GitHub App setup, wallets, the extension, testing from other devices,
+troubleshooting) is [`docs/running-locally.md`](docs/running-locally.md). Other tasks: `make help`. Backend details: [`docs/backend/README.md`](docs/backend/README.md); frontend details: [`docs/frontend/README.md`](docs/frontend/README.md).
 
 Working on one side only:
 

@@ -150,6 +150,8 @@ mod mock_wallet {
         pub const PAYS_SILENTLY_SATS: u64 = 777;
         /// Answers `QUOTA_EXCEEDED`.
         pub const QUOTA_EXCEEDED_SATS: u64 = 888;
+        /// Answers `PAYMENT_FAILED` because the route's fee is over its limit (Coinos's wording).
+        pub const FEE_LIMIT_SATS: u64 = 555;
         /// Never pays and never answers: `lookup_invoice` says not found.
         pub const NEVER_ANSWERS_SATS: u64 = 999;
     }
@@ -381,6 +383,11 @@ mod mock_wallet {
                         Method::PayInvoice,
                         ErrorCode::QuotaExceeded,
                         "budget used up",
+                    )),
+                    behaviour::FEE_LIMIT_SATS => Some(error(
+                        Method::PayInvoice,
+                        ErrorCode::PaymentFailed,
+                        "Routing fee of ⚡️1 required, max fee is ⚡️0",
                     )),
                     behaviour::NEVER_ANSWERS_SATS => None,
                     _ => {

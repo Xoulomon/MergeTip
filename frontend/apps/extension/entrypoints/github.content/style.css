@@ -1,0 +1,6 @@
+/* Styles for the shadow-root tip panel only; nothing here reaches github.com's page. */
+@import 'tailwindcss';
+@import '@mergetip/ui/tokens.css';
+
+@source '../../../../packages/ui/src';
+@source '../../components';

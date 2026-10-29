@@ -94,7 +94,8 @@ pub trait ReceiverEndpoint: Send + Sync {
         comment: Option<&str>,
     ) -> Result<ValidatedInvoice, ResolveError>;
 
-    /// Checks that an address resolves to a usable LNURL-pay endpoint (when a user links it).
+    /// Checks that an address resolves and hands out invoices the payer accepts (when a user
+    /// links it). Asks for one test invoice; never pays.
     async fn probe(&self, address: &LightningAddress) -> Result<(), ResolveError>;
 }
 

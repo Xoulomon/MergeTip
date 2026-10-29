@@ -4,25 +4,20 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>MergeTip — Non-Custodial Bitcoin Tips for GitHub Work</title>
 		<meta
 			name="description"
-			content="Tip open-source contributors in sats, straight from GitHub, for verified work. Non-custodial payments over Nostr Wallet Connect (NWC) and Lightning Address."
+			content="Tip open-source contributors in sats, straight from GitHub, for verified work. Non-custodial: you pay from your own wallet."
 		/>
-		<script>
-			// Prevent flash of wrong theme
-			(function () {
-				try {
-					var stored = localStorage.getItem('mergetip-theme');
-					var prefDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-					var theme = stored ? stored : prefDark ? 'dark' : 'light';
-					document.documentElement.dataset.theme = theme;
-				} catch (e) {}
-			})();
+		<script nonce="%sveltekit.nonce%">
+			// Apply a saved theme choice before first paint; otherwise the OS preference applies.
+			try {
+				const theme = localStorage.getItem('mergetip-theme');
+				if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+			} catch {}
 		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
+		<div class="contents">%sveltekit.body%</div>
 	</body>
 </html>

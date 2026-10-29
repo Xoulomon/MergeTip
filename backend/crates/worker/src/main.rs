@@ -21,6 +21,7 @@ use mergetip_worker::{
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    mergetip_runtime::tls::install_crypto_provider();
     dotenvy::dotenv().ok();
     let cli = Cli::parse();
     let config = WorkerConfig::from_env(&ProcessEnv).context("invalid configuration")?;

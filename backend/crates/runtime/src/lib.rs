@@ -6,5 +6,6 @@ pub mod db;
 pub mod metrics;
 pub mod shutdown;
 pub mod telemetry;
+pub mod tls;
 
 pub use config::{AppEnv, ConfigError};

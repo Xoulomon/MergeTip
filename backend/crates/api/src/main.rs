@@ -30,6 +30,7 @@ enum Command {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    mergetip_runtime::tls::install_crypto_provider();
     match Cli::parse().command.unwrap_or(Command::Serve) {
         Command::Openapi => {
             print!("{}", openapi::json());

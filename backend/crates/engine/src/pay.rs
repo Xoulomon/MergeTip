@@ -285,6 +285,9 @@ impl Engine {
         err: &PayError,
         terminal_code: &str,
     ) -> Result<(), EngineError> {
+        if err.is_fee_limit() {
+            return self.fail_tip(tip, "fee_limit", Some(err.to_string())).await;
+        }
         let terminal = match err {
             PayError::Wallet { code, .. } => code.is_terminal(),
             PayError::InvalidUri => true,

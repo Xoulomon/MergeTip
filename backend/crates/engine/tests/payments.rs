@@ -338,6 +338,8 @@ async fn terminal_wallet_errors_fail_the_tip(pool: PgPool) -> sqlx::Result<()> {
     for (sats, code) in [
         (behaviour::INSUFFICIENT_BALANCE_SATS, "insufficient_balance"),
         (behaviour::QUOTA_EXCEEDED_SATS, "quota_exceeded"),
+        // A plain PAYMENT_FAILED, but about the fee limit: retrying can't help.
+        (behaviour::FEE_LIMIT_SATS, "fee_limit"),
     ] {
         let address = w.address("reviewer");
         let tip = w.paying_tip("reviewer", Some(&address), sats).await;

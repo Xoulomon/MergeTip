@@ -1,7 +1,8 @@
 //! Mock LNURL-pay server: every `user@<this host>` is a Lightning address. Invoices are real,
 //! signed regtest invoices that `mock-nwc` (sharing `MOCK_SEED`) can pay.
 //!
-//! Magic users, for exercising MergeTip's invoice checks:
+//! Magic users, for exercising MergeTip's invoice checks. They behave for the smallest amount,
+//! which is what MergeTip asks for when an address is linked, and misbehave on real tips:
 //! - `wrongamount`: the invoice is for 1 sat more than asked.
 //! - `expired`: the invoice expires in 30 seconds.
 //! - `badhash`: the invoice commits to different metadata.
@@ -57,6 +58,9 @@ fn host(headers: &HeaderMap) -> String {
         .to_owned()
 }
 
+/// The smallest amount any mock address accepts, in millisats.
+const MIN_SENDABLE_MSAT: u64 = 1_000;
+
 async fn pay_request(Path(user): Path<String>, headers: HeaderMap) -> Response {
     if user == "down" {
         return StatusCode::INTERNAL_SERVER_ERROR.into_response();
@@ -65,7 +69,7 @@ async fn pay_request(Path(user): Path<String>, headers: HeaderMap) -> Response {
     Json(json!({
         "tag": "payRequest",
         "callback": format!("http://{host}/lnurlp/{user}/callback"),
-        "minSendable": 1_000,
+        "minSendable": MIN_SENDABLE_MSAT,
         "maxSendable": 100_000_000_000u64,
         "metadata": metadata(&user, &host),
         "commentAllowed": 140
@@ -92,8 +96,12 @@ async fn callback(
         seed: mock.seed,
         ..MintParams::default()
     };
+    // The link-time check asks for the minimum; a server that only misbehaves later is the
+    // case the payer's own checks exist for.
+    let linking = query.amount <= MIN_SENDABLE_MSAT;
     match user.as_str() {
         "down" => return StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        _ if linking => {}
         "wrongamount" => params.amount = Msats::new(query.amount + 1_000),
         "expired" => params.expiry = Duration::from_secs(30),
         "badhash" => params.metadata = "[]".into(),
@@ -181,6 +189,22 @@ mod tests {
             invoice_for("alice").await.is_ok(),
             "MergeTip accepts its invoices"
         );
+    }
+
+    #[tokio::test]
+    async fn magic_users_pass_the_check_made_when_linking() {
+        for user in ["wrongamount", "expired", "badhash"] {
+            let (_, params) = get(&format!("/.well-known/lnurlp/{user}")).await;
+            let (_, body) = get(&format!("/lnurlp/{user}/callback?amount=1000")).await;
+            let checked = invoice::validate(
+                body["pr"].as_str().unwrap(),
+                Msats::new(1_000),
+                params["metadata"].as_str().unwrap(),
+                Network::Regtest,
+                OffsetDateTime::now_utc(),
+            );
+            assert!(checked.is_ok(), "{user}: {checked:?}");
+        }
     }
 
     #[tokio::test]

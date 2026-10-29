@@ -222,6 +222,11 @@ pub fn failed(
              @{receiver}. Check your wallet's history before tipping again; MergeTip won't \
              retry it."
         ),
+        "fee_limit" => format!(
+            "😕 @{sender}, your wallet wouldn't pay the routing fee for the **{amount}** tip to \
+             @{receiver}, so nothing was sent. Small tips can need a fee of a sat or two: tip a \
+             larger amount, or raise your wallet's fee limit for MergeTip."
+        ),
         "receiver_unpayable" => format!(
             "😕 @{sender}, @{receiver}'s Lightning address couldn't accept this payment, so \
              nothing was sent."
@@ -405,6 +410,7 @@ mod tests {
             "daily_cap_reached",
             "over_per_tip_cap",
             "receiver_unpayable",
+            "fee_limit",
             "payment_unconfirmed",
             "payment_failed",
         ];

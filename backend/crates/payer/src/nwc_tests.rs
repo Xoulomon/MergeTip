@@ -3,7 +3,7 @@
 use std::time::Duration;
 
 use mergetip_core::Msats;
-use nostr_sdk::prelude::MockRelay;
+use nostr_sdk::prelude::{EventBuilder, FinalizeEvent, Keys, MockRelay, SecretKey, Tag};
 
 use super::*;
 use crate::{
@@ -27,6 +27,39 @@ fn invoice(sats: u64) -> crate::testing::MintedInvoice {
         seed: SEED,
         ..MintParams::default()
     })
+}
+
+#[tokio::test]
+async fn takes_the_newest_info_event_when_relays_disagree() {
+    // Like Alby Hub: two relays in the URI, one still holding an older info event.
+    let current = MockRelay::run().await.unwrap();
+    let stale = MockRelay::run().await.unwrap();
+    let wallet_secret = [7; 32];
+    let wallet = MockWallet::start_with(crate::testing::MockWalletOptions {
+        relay: current.url().await.to_string(),
+        advertised_relay: None,
+        seed: SEED,
+        wallet_secret: Some(wallet_secret),
+        app_secret: None,
+    })
+    .await
+    .unwrap();
+
+    let keys = Keys::new(SecretKey::from_slice(&wallet_secret).unwrap());
+    let older = EventBuilder::new(Kind::WalletConnectInfo, "pay_invoice")
+        .tag(Tag::parse(["encryption", "nip04"]).unwrap())
+        .custom_created_at(Timestamp::now() - Duration::from_secs(3_600))
+        .finalize(&keys)
+        .unwrap();
+    let publisher = Client::default();
+    publisher.add_relay(stale.url().await).await.unwrap();
+    publisher.connect().await;
+    publisher.send_event(&older).await.unwrap();
+
+    let both = format!("{}&relay={}", wallet.uri(), stale.url().await);
+    let client = NwcWallet::connect(&both).await.unwrap();
+    assert_eq!(client.cipher, Nip47Ciphers::NIP44V2);
+    assert!(client.get_info().await.unwrap().supports("pay_invoice"));
 }
 
 #[tokio::test]
@@ -168,4 +201,32 @@ async fn live_relay_round_trip() {
         .await
         .unwrap();
     assert_eq!(proof.preimage, minted.preimage);
+}
+
+#[test]
+fn fee_limit_refusals_are_recognised() {
+    let failed = |message: &str| PayError::Wallet {
+        code: WalletErrorCode::PaymentFailed,
+        message: message.into(),
+    };
+    for message in [
+        "Routing fee of ⚡️1 required, max fee is ⚡️0", // Coinos, seen live
+        "route fee exceeds max fee",
+        "Payment failed: fee limit exceeded",
+    ] {
+        assert!(failed(message).is_fee_limit(), "{message}");
+    }
+    for message in [
+        "no route found",
+        "invoice expired",
+        "insufficient fee budget? no",
+    ] {
+        assert!(!failed(message).is_fee_limit(), "{message}");
+    }
+    // Only a payment failure counts; the same words under another code don't.
+    let quota = PayError::Wallet {
+        code: WalletErrorCode::QuotaExceeded,
+        message: "max fee is 0".into(),
+    };
+    assert!(!quota.is_fee_limit());
 }

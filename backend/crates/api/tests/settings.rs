@@ -11,12 +11,12 @@ use axum::{
 };
 use common::{MASTER_KEY, WEB};
 use mergetip_api::router;
-use mergetip_core::{GithubUserId, SystemClock};
+use mergetip_core::{GithubUserId, Msats, SystemClock};
 use mergetip_crypto::{Keyring, random_token};
 use mergetip_payer::{
     LnurlClient, Network, PaymentProof, SenderWallet, WalletConnector,
     nwc::{Encryption, Lookup, NwcConnector, PayError, WalletInfo},
-    testing::MockWallet,
+    testing::{MintParams, MockWallet, mint_invoice},
 };
 use mergetip_store::{
     sessions::{self, SessionKind},
@@ -272,6 +272,29 @@ async fn lightning_addresses_are_checked_before_saving(pool: PgPool) -> sqlx::Re
         })))
         .mount(&lnurl)
         .await;
+    // Linking asks for a test invoice at the minimum: alice's is valid.
+    Mock::given(method("GET"))
+        .and(path("/cb"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "pr": mint_invoice(&MintParams {
+                amount: Msats::new(1_000),
+                metadata: "[]".into(),
+                ..MintParams::default()
+            })
+            .bolt11
+        })))
+        .mount(&lnurl)
+        .await;
+    // Resolves fine, but its invoices commit to other metadata (seen live on primal.net).
+    Mock::given(method("GET"))
+        .and(path("/.well-known/lnurlp/unverifiable"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "tag": "payRequest", "callback": format!("{}/cb", lnurl.uri()),
+            "minSendable": 1000, "maxSendable": 1000000000,
+            "metadata": "[[\"text/plain\",\"something else\"]]"
+        })))
+        .mount(&lnurl)
+        .await;
     Mock::given(method("GET"))
         .and(path("/.well-known/lnurlp/down"))
         .respond_with(ResponseTemplate::new(503))
@@ -296,6 +319,7 @@ async fn lightning_addresses_are_checked_before_saving(pool: PgPool) -> sqlx::Re
     for (address, code) in [
         ("not-an-address".to_owned(), "lnurl_invalid"),
         (format!("nobody@{host}"), "lnurl_invalid"),
+        (format!("unverifiable@{host}"), "lnurl_invalid"),
         (format!("down@{host}"), "lnurl_unreachable"),
     ] {
         let response = s

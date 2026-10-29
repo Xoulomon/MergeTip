@@ -74,7 +74,9 @@ impl Respond for Lnurl {
             .find(|(k, _)| k == "amount")
             .and_then(|(_, v)| v.parse().ok())
             .unwrap_or(0);
-        let amount = if user == "wrongamount" {
+        // Like a real server gone bad after it was linked: honest for the link-time test
+        // invoice (the minimum), wrong for real tips.
+        let amount = if user == "wrongamount" && amount > 1_000 {
             amount + 1_000
         } else {
             amount

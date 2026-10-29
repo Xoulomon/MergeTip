@@ -140,6 +140,22 @@ jobs:
       - run: pnpm check
       - run: pnpm test
       - run: pnpm build
+      # Against a mocked API, with axe checks; uses the runner's preinstalled Chrome.
+      - name: End-to-end tests
+        run: pnpm --filter @mergetip/web test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: frontend/apps/web/test-results
+          retention-days: 7
+      - name: Package the extension
+        run: pnpm --filter @mergetip/extension zip && pnpm --filter @mergetip/extension zip:firefox
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension
+          path: frontend/apps/extension/.output/*.zip
+          retention-days: 14
 
   secrets-scan:
     runs-on: ubuntu-latest

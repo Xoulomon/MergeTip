@@ -32,6 +32,8 @@ tower-http = { version = "0.7", features = ["trace", "limit", "cors", "timeout",
 tower = { version = "0.5", features = ["util"] }
 governor = "0.10"
 reqwest = { version = "0.13", default-features = false, features = ["json", "form", "rustls"] }
+# Only to pick the process-wide crypto provider (see mergetip-runtime::tls).
+rustls = { version = "0.23", default-features = false, features = ["aws_lc_rs", "std"] }
 
 # serialization / errors / ids
 serde = { version = "1", features = ["derive"] }

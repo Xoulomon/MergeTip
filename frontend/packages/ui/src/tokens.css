@@ -1,223 +1,124 @@
-/* Primer-style design tokens for MergeTip. ⚡ is the primary brand accent. */
+/*
+ * Primer-style design tokens. Each colour is `light-dark(light, dark)`: the OS preference picks
+ * the theme, and `data-theme` on <html> overrides it. ⚡ (`bolt`) is the only brand accent.
+ *
+ * Import this after `tailwindcss`; `@theme inline` turns the tokens into utilities such as
+ * `bg-canvas`, `text-fg-muted` and `border-default`. `:host` makes them work inside the
+ * extension's shadow-root panel on github.com, which inherits the page's colour scheme.
+ */
 :root,
-[data-theme='light'] {
+:host {
+	color-scheme: light dark;
+
 	--mt-font:
 		-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
 	--mt-font-mono:
 		ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-	/* Canvas & Surfaces */
-	--mt-bg: #ffffff;
-	--mt-bg-subtle: #f6f8fa;
-	--mt-bg-inset: #eff2f5;
-	--mt-surface: #ffffff;
-	--mt-surface-hover: #f3f4f6;
-	--mt-surface-raised: #ffffff;
+	--mt-bg: light-dark(#ffffff, #0d1117);
+	--mt-bg-subtle: light-dark(#f6f8fa, #151b23);
+	--mt-bg-inset: light-dark(#eff2f5, #010409);
+	--mt-surface-hover: light-dark(#eff2f5, #212830);
 
-	/* Text & Foreground */
-	--mt-fg: #1f2328;
-	--mt-fg-muted: #59636e;
-	--mt-fg-subtle: #6e7781;
-	--mt-fg-on-accent: #ffffff;
+	--mt-fg: light-dark(#1f2328, #f0f6fc);
+	--mt-fg-muted: light-dark(#59636e, #9198a1);
 
-	/* Borders */
-	--mt-border: #d1d9e0;
-	--mt-border-muted: #e1e4e8;
-	--mt-border-active: #0969da;
+	--mt-border: light-dark(#d1d9e0, #3d444d);
+	--mt-border-muted: light-dark(#d1d9e0b3, #3d444db3);
+	--mt-focus: light-dark(#0969da, #1f6feb);
 
-	/* Buttons */
-	--mt-btn-bg: #f6f8fa;
-	--mt-btn-hover: #f3f4f6;
-	--mt-btn-border: #d1d9e0;
+	--mt-btn: light-dark(#f6f8fa, #212830);
+	--mt-btn-hover: light-dark(#eff2f5, #262c36);
 
-	/* GitHub Accent (Primary action green) */
-	--mt-accent: #1f883d;
-	--mt-accent-hover: #1a7f37;
-	--mt-accent-subtle: #dafbe1;
-	--mt-accent-fg: #ffffff;
+	--mt-accent: light-dark(#1f883d, #238636);
+	--mt-accent-hover: light-dark(#1c8139, #1f7a33);
+	--mt-on-accent: #ffffff;
 
-	/* Bitcoin / Lightning Brand Accent */
-	--mt-bolt: #d4a72c;
-	--mt-bolt-hover: #b98f24;
-	--mt-bolt-subtle: #fff8c5;
-	--mt-bolt-fg: #4d2d00;
-	--mt-bolt-glow: rgba(212, 167, 44, 0.25);
+	--mt-bolt: light-dark(#9a6700, #e3b341);
+	--mt-bolt-emphasis: light-dark(#bf8700, #d29922);
+	--mt-bolt-subtle: light-dark(#fff8c5, #bb800926);
+	--mt-on-bolt: light-dark(#1f2328, #0d1117);
 
-	/* Status Colors */
-	--mt-success: #1a7f37;
-	--mt-success-bg: #dafbe1;
-	--mt-success-border: #4ac26b;
+	--mt-success: light-dark(#1a7f37, #3fb950);
+	--mt-success-subtle: light-dark(#dafbe1, #2ea04326);
+	--mt-warning: light-dark(#9a6700, #d29922);
+	--mt-warning-subtle: light-dark(#fff8c5, #bb800926);
+	--mt-danger: light-dark(#d1242f, #f85149);
+	--mt-danger-emphasis: light-dark(#cf222e, #da3633);
+	--mt-danger-subtle: light-dark(#ffebe9, #f8514926);
+	--mt-info: light-dark(#0969da, #4493f8);
+	--mt-info-subtle: light-dark(#ddf4ff, #388bfd26);
 
-	--mt-warning: #9a6700;
-	--mt-warning-bg: #fff8c5;
-	--mt-warning-border: #d4a72c;
-
-	--mt-info: #0969da;
-	--mt-info-bg: #ddf4ff;
-	--mt-info-border: #54aeff;
-
-	--mt-danger: #cf222e;
-	--mt-danger-bg: #ffebe9;
-	--mt-danger-border: #ff8182;
-
-	--mt-purple: #8250df;
-	--mt-purple-bg: #fbefff;
-	--mt-purple-border: #c297ff;
-
-	/* Shadows */
-	--mt-shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.06);
-	--mt-shadow-md: 0 3px 6px rgba(31, 35, 40, 0.08), 0 1px 3px rgba(31, 35, 40, 0.06);
-	--mt-shadow-lg: 0 8px 24px rgba(31, 35, 40, 0.12);
-	--mt-shadow-glow: 0 0 24px rgba(212, 167, 44, 0.2);
-
-	/* Glass & Backdrop */
-	--mt-glass-bg: rgba(255, 255, 255, 0.82);
-	--mt-glass-border: rgba(209, 217, 224, 0.65);
-	--mt-glass-blur: blur(14px);
-
-	/* Emil Kowalski Animation Philosophy Curves */
-	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-	--duration-fast: 140ms;
-	--duration-normal: 220ms;
-	--duration-smooth: 320ms;
+	--mt-shadow-md: light-dark(0 3px 6px #1f232814, 0 3px 6px #01040966);
+	--mt-shadow-lg: light-dark(0 8px 24px #1f23281f, 0 8px 24px #010409cc);
 }
 
-[data-theme='dark'] {
-	/* Canvas & Surfaces */
-	--mt-bg: #0d1117;
-	--mt-bg-subtle: #161b22;
-	--mt-bg-inset: #010409;
-	--mt-surface: #161b22;
-	--mt-surface-hover: #21262d;
-	--mt-surface-raised: #1c2128;
-
-	/* Text & Foreground */
-	--mt-fg: #f0f6fc;
-	--mt-fg-muted: #9198a1;
-	--mt-fg-subtle: #656c76;
-	--mt-fg-on-accent: #ffffff;
-
-	/* Borders */
-	--mt-border: #3d444d;
-	--mt-border-muted: #2e343b;
-	--mt-border-active: #2f81f7;
-
-	/* Buttons */
-	--mt-btn-bg: #212830;
-	--mt-btn-hover: #29313d;
-	--mt-btn-border: #3d444d;
-
-	/* GitHub Accent (Primary action green) */
-	--mt-accent: #238636;
-	--mt-accent-hover: #2ea043;
-	--mt-accent-subtle: rgba(46, 160, 67, 0.15);
-	--mt-accent-fg: #ffffff;
-
-	/* Bitcoin / Lightning Brand Accent */
-	--mt-bolt: #e3b341;
-	--mt-bolt-hover: #f0c354;
-	--mt-bolt-subtle: rgba(227, 179, 65, 0.15);
-	--mt-bolt-fg: #f9e2af;
-	--mt-bolt-glow: rgba(227, 179, 65, 0.35);
-
-	/* Status Colors */
-	--mt-success: #3fb950;
-	--mt-success-bg: rgba(46, 160, 67, 0.15);
-	--mt-success-border: rgba(63, 185, 80, 0.4);
-
-	--mt-warning: #d29922;
-	--mt-warning-bg: rgba(187, 128, 9, 0.15);
-	--mt-warning-border: rgba(210, 153, 34, 0.4);
-
-	--mt-info: #58a6ff;
-	--mt-info-bg: rgba(56, 139, 253, 0.15);
-	--mt-info-border: rgba(88, 166, 255, 0.4);
-
-	--mt-danger: #f85149;
-	--mt-danger-bg: rgba(248, 81, 73, 0.15);
-	--mt-danger-border: rgba(248, 81, 73, 0.4);
-
-	--mt-purple: #bc8cff;
-	--mt-purple-bg: rgba(163, 113, 247, 0.15);
-	--mt-purple-border: rgba(188, 140, 255, 0.4);
-
-	/* Shadows */
-	--mt-shadow-sm: 0 1px 2px rgba(1, 4, 9, 0.5);
-	--mt-shadow-md: 0 3px 6px rgba(1, 4, 9, 0.6), 0 1px 3px rgba(1, 4, 9, 0.4);
-	--mt-shadow-lg: 0 8px 24px rgba(1, 4, 9, 0.8);
-	--mt-shadow-glow: 0 0 30px rgba(227, 179, 65, 0.28);
-
-	/* Glass & Backdrop */
-	--mt-glass-bg: rgba(22, 27, 34, 0.76);
-	--mt-glass-border: rgba(255, 255, 255, 0.1);
-	--mt-glass-blur: blur(14px);
-
-	/* Emil Kowalski Animation Philosophy Curves */
-	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-	--duration-fast: 140ms;
-	--duration-normal: 220ms;
-	--duration-smooth: 320ms;
+:root[data-theme='light'] {
+	color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root:not([data-theme='light']) {
-		--mt-bg: #0d1117;
-		--mt-bg-subtle: #161b22;
-		--mt-bg-inset: #010409;
-		--mt-surface: #161b22;
-		--mt-surface-hover: #21262d;
-		--mt-surface-raised: #1c2128;
+:root[data-theme='dark'] {
+	color-scheme: dark;
+}
 
-		--mt-fg: #f0f6fc;
-		--mt-fg-muted: #9198a1;
-		--mt-fg-subtle: #656c76;
-		--mt-fg-on-accent: #ffffff;
+@theme inline {
+	--font-sans: var(--mt-font);
+	--font-mono: var(--mt-font-mono);
 
-		--mt-border: #3d444d;
-		--mt-border-muted: #2e343b;
-		--mt-border-active: #2f81f7;
+	--color-canvas: var(--mt-bg);
+	--color-subtle: var(--mt-bg-subtle);
+	--color-inset: var(--mt-bg-inset);
+	--color-hover: var(--mt-surface-hover);
+	--color-fg: var(--mt-fg);
+	--color-fg-muted: var(--mt-fg-muted);
+	--color-default: var(--mt-border);
+	--color-muted: var(--mt-border-muted);
+	--color-focus: var(--mt-focus);
+	--color-btn: var(--mt-btn);
+	--color-btn-hover: var(--mt-btn-hover);
+	--color-accent: var(--mt-accent);
+	--color-accent-hover: var(--mt-accent-hover);
+	--color-on-accent: var(--mt-on-accent);
+	--color-bolt: var(--mt-bolt);
+	--color-bolt-emphasis: var(--mt-bolt-emphasis);
+	--color-bolt-subtle: var(--mt-bolt-subtle);
+	--color-on-bolt: var(--mt-on-bolt);
+	--color-success: var(--mt-success);
+	--color-success-subtle: var(--mt-success-subtle);
+	--color-warning: var(--mt-warning);
+	--color-warning-subtle: var(--mt-warning-subtle);
+	--color-danger: var(--mt-danger);
+	--color-danger-emphasis: var(--mt-danger-emphasis);
+	--color-danger-subtle: var(--mt-danger-subtle);
+	--color-info: var(--mt-info);
+	--color-info-subtle: var(--mt-info-subtle);
 
-		--mt-btn-bg: #212830;
-		--mt-btn-hover: #29313d;
-		--mt-btn-border: #3d444d;
+	--shadow-md: var(--mt-shadow-md);
+	--shadow-lg: var(--mt-shadow-lg);
+}
 
-		--mt-accent: #238636;
-		--mt-accent-hover: #2ea043;
-		--mt-accent-subtle: rgba(46, 160, 67, 0.15);
-		--mt-accent-fg: #ffffff;
-
-		--mt-bolt: #e3b341;
-		--mt-bolt-hover: #f0c354;
-		--mt-bolt-subtle: rgba(227, 179, 65, 0.15);
-		--mt-bolt-fg: #f9e2af;
-		--mt-bolt-glow: rgba(227, 179, 65, 0.35);
-
-		--mt-success: #3fb950;
-		--mt-success-bg: rgba(46, 160, 67, 0.15);
-		--mt-success-border: rgba(63, 185, 80, 0.4);
-
-		--mt-warning: #d29922;
-		--mt-warning-bg: rgba(187, 128, 9, 0.15);
-		--mt-warning-border: rgba(210, 153, 34, 0.4);
-
-		--mt-info: #58a6ff;
-		--mt-info-bg: rgba(56, 139, 253, 0.15);
-		--mt-info-border: rgba(88, 166, 255, 0.4);
-
-		--mt-danger: #f85149;
-		--mt-danger-bg: rgba(248, 81, 73, 0.15);
-		--mt-danger-border: rgba(248, 81, 73, 0.4);
-
-		--mt-purple: #bc8cff;
-		--mt-purple-bg: rgba(163, 113, 247, 0.15);
-		--mt-purple-border: rgba(188, 140, 255, 0.4);
-
-		--mt-shadow-sm: 0 1px 2px rgba(1, 4, 9, 0.5);
-		--mt-shadow-md: 0 3px 6px rgba(1, 4, 9, 0.6), 0 1px 3px rgba(1, 4, 9, 0.4);
-		--mt-shadow-lg: 0 8px 24px rgba(1, 4, 9, 0.8);
+@layer base {
+	body {
+		@apply bg-canvas text-fg font-sans antialiased;
 	}
+
+	:focus-visible {
+		@apply outline-focus outline-2 outline-offset-2;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		::before,
+		::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
+}
+
+/* Form controls share one look across the web app and the extension popup. */
+@utility mt-input {
+	@apply border-default bg-canvas text-fg placeholder:text-fg-muted focus-visible:border-focus disabled:bg-subtle disabled:text-fg-muted aria-invalid:border-danger w-full rounded-md border px-3 py-1.5 text-sm shadow-xs focus-visible:outline-1 focus-visible:outline-offset-0 disabled:cursor-not-allowed;
 }

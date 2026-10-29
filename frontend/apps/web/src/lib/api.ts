@@ -1,4 +1,5 @@
 import { PUBLIC_API_URL } from '$app/env/public';
-import { createApiClient } from '@mergetip/api-client';
+import { MergeTipApi } from '@mergetip/api-client';
 
-export const api = createApiClient(PUBLIC_API_URL);
+/** The API, authenticated by the HttpOnly `mt_session` cookie. */
+export const api = new MergeTipApi({ baseUrl: PUBLIC_API_URL });

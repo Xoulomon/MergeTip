@@ -3,152 +3,37 @@
 
 	let {
 		title,
-		subtitle,
-		badge,
-		action,
-		footer,
+		description,
+		headingLevel = 2,
+		actions,
 		children,
-		hover = false,
-		padding = 'normal'
+		class: extra = ''
 	}: {
-		title?: string | Snippet;
-		subtitle?: string | Snippet;
-		badge?: Snippet;
-		action?: Snippet;
-		footer?: Snippet;
+		title?: string;
+		description?: string;
+		headingLevel?: 2 | 3;
+		/** Rendered on the right of the header, e.g. a status badge. */
+		actions?: Snippet;
 		children: Snippet;
-		hover?: boolean;
-		padding?: 'none' | 'sm' | 'normal' | 'lg';
+		class?: string;
 	} = $props();
 </script>
 
-<div class="mt-card {hover ? 'mt-card-hover' : ''}">
-	{#if title || subtitle || badge || action}
-		<div class="mt-card-header">
-			<div class="mt-card-header-left">
-				{#if title}
-					<div class="mt-card-title">
-						{#if typeof title === 'string'}
-							<h3>{title}</h3>
-						{:else}
-							{@render title()}
-						{/if}
-						{#if badge}
-							<div class="mt-card-badge">{@render badge()}</div>
-						{/if}
-					</div>
-				{/if}
-				{#if subtitle}
-					<div class="mt-card-subtitle">
-						{#if typeof subtitle === 'string'}
-							<p>{subtitle}</p>
-						{:else}
-							{@render subtitle()}
-						{/if}
-					</div>
-				{/if}
+<section class="rounded-md border border-default bg-canvas {extra}">
+	{#if title}
+		<header
+			class="flex flex-wrap items-start justify-between gap-3 border-b border-default bg-subtle px-4 py-3"
+		>
+			<div class="min-w-0">
+				<svelte:element this={`h${headingLevel}`} class="text-sm font-semibold"
+					>{title}</svelte:element
+				>
+				{#if description}<p class="mt-0.5 text-sm text-fg-muted">{description}</p>{/if}
 			</div>
-			{#if action}
-				<div class="mt-card-action">
-					{@render action()}
-				</div>
-			{/if}
-		</div>
+			{@render actions?.()}
+		</header>
 	{/if}
-
-	<div class="mt-card-body mt-card-body-{padding}">
+	<div class="p-4">
 		{@render children()}
 	</div>
-
-	{#if footer}
-		<div class="mt-card-footer">
-			{@render footer()}
-		</div>
-	{/if}
-</div>
-
-<style>
-	.mt-card {
-		background: var(--mt-glass-bg);
-		backdrop-filter: var(--mt-glass-blur);
-		-webkit-backdrop-filter: var(--mt-glass-blur);
-		border: 1px solid var(--mt-glass-border);
-		border-radius: 12px;
-		box-shadow: var(--mt-shadow-sm);
-		overflow: hidden;
-		transition:
-			transform var(--duration-normal) var(--ease-out),
-			border-color var(--duration-normal) var(--ease-out),
-			box-shadow var(--duration-normal) var(--ease-out);
-	}
-
-	.mt-card-hover:hover {
-		border-color: var(--mt-bolt);
-		box-shadow:
-			var(--mt-shadow-md),
-			0 0 20px var(--mt-bolt-subtle);
-		transform: translateY(-2px);
-	}
-
-	.mt-card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 14px 18px;
-		border-bottom: 1px solid var(--mt-border-muted);
-		background: var(--mt-surface);
-		gap: 12px;
-	}
-
-	.mt-card-header-left {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	.mt-card-title {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.mt-card-title h3 {
-		font-size: 15px;
-		font-weight: 600;
-		color: var(--mt-fg);
-		margin: 0;
-	}
-
-	.mt-card-subtitle p {
-		font-size: 13px;
-		color: var(--mt-fg-muted);
-		margin: 0;
-	}
-
-	.mt-card-body-none {
-		padding: 0;
-	}
-
-	.mt-card-body-sm {
-		padding: 12px;
-	}
-
-	.mt-card-body-normal {
-		padding: 18px;
-	}
-
-	.mt-card-body-lg {
-		padding: 24px;
-	}
-
-	.mt-card-footer {
-		padding: 12px 18px;
-		border-top: 1px solid var(--mt-border-muted);
-		background: var(--mt-bg-subtle);
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		font-size: 13px;
-		color: var(--mt-fg-muted);
-	}
-</style>
+</section>

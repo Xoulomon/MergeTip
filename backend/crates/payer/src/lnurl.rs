@@ -170,6 +170,26 @@ impl LnurlClient {
         comment: Option<&str>,
     ) -> Result<ValidatedInvoice, ResolveError> {
         let params = self.pay_params(address).await?;
+        self.invoice_from(&params, amount, comment).await
+    }
+
+    /// Checks an address before it is linked: it must resolve, and the invoice it hands out
+    /// must pass the same checks as a real payment. Some servers return invoices that don't
+    /// commit to their own metadata (description hash), which the payer refuses (FR-5.1);
+    /// catching that here means a receiver fixes it in settings instead of every tip to them
+    /// failing later. The test invoice is for the smallest amount allowed and is never paid.
+    pub async fn check_address(&self, address: &LightningAddress) -> Result<(), ResolveError> {
+        let params = self.pay_params(address).await?;
+        let smallest = Sats::new(params.min.get().div_ceil(1_000));
+        self.invoice_from(&params, smallest, None).await.map(|_| ())
+    }
+
+    async fn invoice_from(
+        &self,
+        params: &PayParams,
+        amount: Sats,
+        comment: Option<&str>,
+    ) -> Result<ValidatedInvoice, ResolveError> {
         let msats = amount.to_msats().ok_or(ResolveError::AmountOutOfRange {
             min: params.min.get(),
             max: params.max.get(),
@@ -298,7 +318,7 @@ impl ReceiverEndpoint for LnurlClient {
     }
 
     async fn probe(&self, address: &LightningAddress) -> Result<(), ResolveError> {
-        self.pay_params(address).await.map(|_| ())
+        self.check_address(address).await
     }
 }
 

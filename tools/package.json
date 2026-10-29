@@ -1,0 +1,13 @@
+{
+	"name": "mergetip-tools",
+	"private": true,
+	"type": "module",
+	"description": "Local helpers: check a Nostr Wallet Connect connection, and serve MergeTip through one tunnel origin.",
+	"scripts": {
+		"nwc-probe": "node nwc-probe.mjs",
+		"tunnel-proxy": "node tunnel-proxy.mjs"
+	},
+	"dependencies": {
+		"nostr-tools": "2.25.2"
+	}
+}

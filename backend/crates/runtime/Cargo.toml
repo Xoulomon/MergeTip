@@ -16,6 +16,7 @@ sentry.workspace = true
 mergetip-crypto.workspace = true
 mergetip-notify.workspace = true
 mergetip-store.workspace = true
+rustls.workspace = true
 sqlx.workspace = true
 thiserror.workspace = true
 tokio.workspace = true

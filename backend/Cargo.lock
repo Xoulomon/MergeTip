@@ -2436,6 +2436,7 @@ dependencies = [
  "metrics",
  "metrics-exporter-prometheus",
  "reqwest",
+ "rustls",
  "sentry",
  "sqlx",
  "thiserror 2.0.21",

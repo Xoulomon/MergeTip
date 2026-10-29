@@ -91,6 +91,24 @@ impl WalletErrorCode {
     }
 }
 
+/// Wallets report "the route needs a fee above my limit" as a plain `PAYMENT_FAILED`; NIP-47 has
+/// no code for it. Recognised from the message, e.g. Coinos: "Routing fee of ⚡️1 required, max
+/// fee is ⚡️0". Retrying can't help: the wallet's fee limit, or the amount, has to change.
+fn is_fee_limit_message(message: &str) -> bool {
+    let message = message.to_lowercase();
+    message.contains("fee")
+        && [
+            "max fee",
+            "maximum fee",
+            "fee limit",
+            "fee_limit",
+            "feelimit",
+            "max_fee",
+        ]
+        .iter()
+        .any(|needle| message.contains(needle))
+}
+
 impl fmt::Display for WalletErrorCode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(self.as_str())
@@ -119,6 +137,17 @@ pub enum PayError {
     Protocol(String),
 }
 
+impl PayError {
+    /// The wallet refused because the route's fee is above the limit it allows for this payment.
+    pub fn is_fee_limit(&self) -> bool {
+        matches!(
+            self,
+            Self::Wallet { code: WalletErrorCode::PaymentFailed, message }
+                if is_fee_limit_message(message)
+        )
+    }
+}
+
 use std::time::Duration;
 
 use async_trait::async_trait;
@@ -133,6 +162,8 @@ use crate::{PaymentProof, SenderWallet, WalletConnector};
 
 /// How long to wait for relays to connect and for the wallet's info event.
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+/// Info events to accept while connecting: one version per relay is plenty.
+const MAX_INFO_EVENTS: usize = 16;
 /// `get_info` and `lookup_invoice` are quick; `pay_invoice` gets the caller's timeout.
 const QUERY_TIMEOUT: Duration = Duration::from_secs(15);
 
@@ -167,6 +198,9 @@ impl NwcWallet {
         }
         client.connect().and_wait(CONNECT_TIMEOUT).await;
 
+        // The info event is replaceable, and wallets often list several relays (Alby Hub lists
+        // two), which can each hold a different version. Collect them and keep the newest:
+        // capping the fetch at one makes nostr-sdk fail as soon as a second version arrives.
         let filter = Filter::new()
             .kind(Kind::WalletConnectInfo)
             .author(uri.public_key)
@@ -174,11 +208,11 @@ impl NwcWallet {
         let info: Option<Event> = client
             .fetch_events(filter)
             .timeout(CONNECT_TIMEOUT)
-            .max_events(1)
+            .max_events(MAX_INFO_EVENTS)
             .await
             .map_err(|err| PayError::Relay(err.to_string()))?
             .into_iter()
-            .next();
+            .max_by_key(|event| event.created_at);
         let (cipher, advertised) = match &info {
             Some(event) => (cipher_from(event), methods_from(&event.content)),
             None => (Nip47Ciphers::NIP04, Vec::new()),

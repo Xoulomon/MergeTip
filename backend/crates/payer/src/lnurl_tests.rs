@@ -316,3 +316,45 @@ async fn addresses_on_internal_ip_literals_are_refused() {
         );
     }
 }
+
+#[tokio::test]
+async fn linking_checks_a_test_invoice_for_the_smallest_amount() {
+    let server = MockServer::start().await;
+    let mut body = pay_request(&server, 0);
+    body["minSendable"] = json!(1_500); // 1.5 sats: the test invoice asks for 2
+    serve_pay_request(&server, body).await;
+    Mock::given(method("GET"))
+        .and(path("/lnurlp/alice/callback"))
+        .and(query_param("amount", "2000"))
+        .respond_with(
+            ResponseTemplate::new(200)
+                .set_body_json(json!({ "pr": mint_invoice(&mint(2_000)).bolt11, "routes": [] })),
+        )
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    assert_eq!(client().probe(&address(&server)).await, Ok(()));
+}
+
+/// Live finding (primal.net, October 2026): an address that resolves fine but whose invoices
+/// commit to something other than its metadata. Every tip to it would be refused, so it is
+/// refused when linked.
+#[tokio::test]
+async fn linking_refuses_addresses_whose_invoices_cannot_be_verified() {
+    let server = MockServer::start().await;
+    serve_pay_request(&server, pay_request(&server, 0)).await;
+    serve_invoice(
+        &server,
+        &MintParams {
+            metadata: r#"[["text/plain","something else"]]"#.into(),
+            ..mint(1_000)
+        },
+    )
+    .await;
+
+    assert_eq!(
+        client().probe(&address(&server)).await,
+        Err(ResolveError::Invoice(InvoiceError::DescriptionHashMismatch))
+    );
+}
