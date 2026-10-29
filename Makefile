@@ -11,7 +11,7 @@ export DATABASE_URL SMEE_URL
         sqlx-prepare openapi fmt lint test check check-backend coverage clean
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## ' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## ' $(firstword $(MAKEFILE_LIST)) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
 bootstrap: ## Install toolchains and dependencies
 	rustup show active-toolchain
@@ -30,13 +30,13 @@ down: ## Stop local services
 dev: ## Run api, worker and web app with hot reload
 	$(MAKE) -j3 dev-api dev-worker dev-web
 
-dev-api:
+dev-api: ## Run the api with hot reload
 	cd $(BACKEND) && cargo watch -x 'run -p mergetip-api'
 
-dev-worker:
+dev-worker: ## Run the worker with hot reload
 	cd $(BACKEND) && cargo watch -x 'run -p mergetip-worker'
 
-dev-web:
+dev-web: ## Run the web app with hot reload
 	cd $(FRONTEND) && pnpm dev
 
 dev-app: ## Create a personal GitHub App from deploy/manifests/dev.json (needs SMEE_URL)
